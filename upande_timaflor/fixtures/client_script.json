@@ -1,0 +1,68 @@
+[
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Item",
+  "enabled": 1,
+  "modified": "2025-03-21 06:50:53.975796",
+  "module": null,
+  "name": "Chemical",
+  "script": "frappe.ui.form.on('Item', {\n  item_group: function(frm) {\n    if (frm.doc.item_group === 'Chemical') {\n      // Show the Application Rate Type dropdown and parent section\n      frm.set_df_property('custom_application_rate_type', 'hidden', 0);\n      frm.set_df_property('custom_application_rate_type', 'reqd', 1);\n\n     \n\n      // Initialize child fields as hidden\n      frm.set_df_property('custom_application_rate_per_ha', 'hidden', 1);\n      frm.set_df_property('custom_application_volume_per_10002000l', 'hidden', 1);\n\n    } else {\n      // Hide all fields for non-Chemical items\n      ['custom_application_rate_type', 'custom_application_rate_per_ha', \n       'custom_application_volume_per_10002000l'].forEach(field => {\n        frm.set_df_property(field, 'hidden', 1);\n        frm.set_df_property(field, 'reqd', 0);\n      });\n    }\n    frm.refresh_fields();\n  },\n\n  // Handle visibility of rate/volume fields\n  custom_application_rate_type: function(frm) {\n    if (frm.doc.custom_application_rate_type === 'Per Hectare') {\n      frm.set_df_property('custom_application_rate_per_ha', 'hidden', 0);\n      frm.set_df_property('custom_application_volume_per_10002000l', 'hidden', 1);\n      frm.set_df_property('custom_application_rate_per_ha', 'reqd', 1);\n    } else if (frm.doc.custom_application_rate_type === 'Per Volume') {\n      frm.set_df_property('custom_application_volume_per_10002000l', 'hidden', 0);\n      frm.set_df_property('custom_application_rate_per_ha', 'hidden', 1);\n      frm.set_df_property('custom_application_volume_per_10002000l', 'reqd', 1);\n    }\n    frm.refresh_fields();\n  },\n\n  refresh: function(frm) {\n    frm.trigger('item_group');\n    frm.trigger('custom_application_rate_type'); // Update fields on form load\n  }\n});",
+  "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Item",
+  "enabled": 1,
+  "modified": "2025-03-21 06:55:24.473674",
+  "module": null,
+  "name": "Fertilizer",
+  "script": "frappe.ui.form.on('Item', {\n    item_group: function(frm) {\n        if (frm.doc.item_group === 'Fertilizer') {\n            // Hide or grey out Active Ingredients for Fertilizer\n            frm.set_df_property('custom_active_ingredients', 'hidden', 0); // Hide\n            // OR for read-only (greyed out):\n            frm.set_df_property('custom_active_ingredients', 'read_only', 1);\n\n            // Other Fertilizer-specific settings\n            frm.set_df_property('custom_application_rate', 'hidden', 0);\n            frm.set_df_property('custom_application_rate', 'reqd', 0);\n        } else {\n            // Show Active Ingredients for non-Fertilizer groups\n            frm.set_df_property('custom_active_ingredients', 'hidden', 0);\n            // Hide Fertilizer-specific fields\n            frm.set_df_property('custom_application_rate', 'hidden', 1);\n        }\n    },\n    refresh: function(frm) {\n        frm.trigger('item_group');\n    }\n});",
+  "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "BOM",
+  "enabled": 1,
+  "modified": "2025-03-21 09:50:14.658352",
+  "module": null,
+  "name": "BOM",
+  "script": "frappe.ui.form.on('BOM', {\n    refresh: function(frm) {\n        frm.fields_dict.items.grid.grid_rows.forEach(row => {\n            setup_item_code_event(row);\n        });\n    }\n});\n\n// item_code handler\nfrappe.ui.form.on('BOM Item', {\n    item_code: function(frm, cdt, cdn) {\n        const row = frappe.get_doc(cdt, cdn);\n        if (!row.item_code) return;\n\n        frappe.db.get_value('Item', row.item_code, [\n            'item_group',\n            'custom_application_rate_type',\n            'custom_application_rate_per_ha',\n            'custom_application_volume_per_10002000l'\n        ], (r) => {\n            if (!r) return;\n\n            //  Quantity logic\n            if (r.item_group === 'Chemical') {\n                let rate = 0;\n                if (r.custom_application_rate_type === 'Per Hectare') {\n                    rate = r.custom_application_rate_per_ha || 0;\n                } else if (r.custom_application_rate_type === 'Per Volume') {\n                    rate = r.custom_application_volume_per_10002000l || 0;\n                }\n                frappe.model.set_value(cdt, cdn, 'qty', rate);\n            }\n\n            //Field editability logic\n            const isChemical = r.item_group === 'Chemical';\n            const isFertilizer = r.item_group === 'Fertilizer';\n            \n            const grid_row = frm.fields_dict.items.grid.grid_rows_by_docname[cdn];\n            if (grid_row) {\n                grid_row.set_df_property('nozzle', 'read_only', !isChemical);\n                grid_row.set_df_property('variety', 'read_only', !isChemical);\n                grid_row.set_df_property('tank', 'read_only', !isFertilizer);\n            }\n        });\n    }\n});\n\nfunction setup_item_code_event(row) {\n    row.$wrapper.find('[data-fieldname=\"item_code\"]').on('change', () => {\n        row.doc.item_code && row.doc.item_code();\n    });\n}",
+  "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Fertilizer Ordering Sheet",
+  "enabled": 1,
+  "modified": "2025-03-21 07:37:47.528740",
+  "module": null,
+  "name": "Fertilizer Order Sheet",
+  "script": "frappe.ui.form.on('Fertilizer Ordering Sheet', {\n  days_averaged: function(frm) {\n    // Fetch historical consumption data and calculate averages\n    if (frm.doc.days_averaged && frm.doc.order_items) {\n      frm.doc.order_items.forEach(row => {\n        frappe.call({\n          method: 'your_app.your_custom_method.get_average_consumption',\n          args: {\n            item: row.fertilizer,\n            days: frm.doc.days_averaged\n          },\n          callback: (r) => {\n            frappe.model.set_value(row.doctype, row.name, 't1_avg', r.message);\n          }\n        });\n      });\n    }\n  },\n  order_days: function(frm) {\n    // Auto-calculate order quantity (avg * order_days)\n    if (frm.doc.order_days && frm.doc.order_items) {\n      frm.doc.order_items.forEach(row => {\n        const order_qty = row.t1_avg * frm.doc.order_days;\n        frappe.model.set_value(row.doctype, row.name, 't1_order', order_qty);\n      });\n    }\n  }\n});\n\n// Make \"Days Averaged\" read-only after submit\nfrappe.ui.form.on('Order Sheet', {\n  refresh: function(frm) {\n    if (frm.doc.docstatus === 1) {\n      frm.set_df_property('days_averaged', 'read_only', 1);\n    }\n  }\n});",
+  "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Stock Entry",
+  "enabled": 1,
+  "modified": "2025-03-21 14:05:26.289651",
+  "module": null,
+  "name": "Fuel Issuing",
+  "script": "frappe.ui.form.on('Stock Entry', {\n    issue_to_type: function(frm) {\n        const is_material_issue = frm.doc.stock_entry_type === \"Material Issue\";\n        // Hide all fields initially\n        frm.toggle_display(['custom_vehicle_registration_number', 'custom_machinery', 'resident'], false);\n        \n        // Show fields based on selected type\n        if (type === 'Vehicle') {\n            frm.toggle_display('custom_vehicle_registration_number', true);\n            frm.set_df_property('custom_vehicle_registration_number', 'reqd', 1);\n        } \n        else if (type === 'Machinery') {\n            frm.toggle_display('custom_machinery', true);\n            frm.set_df_property('custom_machinery', 'reqd', 1);\n        } \n        else if (type === 'Resident') {\n            frm.toggle_display('resident', true);\n            frm.set_df_property('resident', 'reqd', 1);\n        }\n\n        // Force refresh the form layout\n        frm.refresh_fields();\n    }\n});",
+  "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Ordering Sheet",
+  "enabled": 1,
+  "modified": "2025-03-25 15:00:54.029643",
+  "module": null,
+  "name": "Ordering Sheet",
+  "script": "frappe.ui.form.on('Ordering Sheet', {\n    days_averaged: function(frm) {\n        if (frm.doc.days_averaged && frm.doc.order_items) {\n            frm.doc.order_items.forEach(row => {\n                frappe.call({\n                    method: 'upande_timaflor.custom.order_sheet.get_average_consumption',\n                    args: {\n                        item: row.fertilizer,\n                        days_averaged: frm.doc.days_averaged\n                    },\n                    callback: (r) => {\n                        if (!r.exc) {\n                            frappe.model.set_value(row.doctype, row.name, 't1_avg', r.message);\n                            if (frm.doc.order_days) {\n                                const order_qty = r.message * frm.doc.order_days;\n                                frappe.model.set_value(row.doctype, row.name, 't1_order', order_qty);\n                            }\n                        }\n                    },\n                    freeze: true,\n                    freeze_message: __(\"Fetching consumption data...\")\n                });\n            });\n        }\n    },\n    order_days: function(frm) {\n        if (frm.doc.order_days && frm.doc.order_items) {\n            frm.doc.order_items.forEach(row => {\n                if (row.t1_avg) {\n                    const order_qty = row.t1_avg * frm.doc.order_days;\n                    frappe.model.set_value(row.doctype, row.name, 't1_order', order_qty);\n                }\n            });\n        }\n    },\n    refresh: function(frm) {\n        if (frm.doc.docstatus === 1) {\n            frm.set_df_property('days_averaged', 'read_only', 1);\n        }\n        // Initialize calculations only for new docs\n        if (!frm.doc.__islocal) {\n            frm.trigger('days_averaged');\n            frm.trigger('order_days');\n        }\n    }\n});",
+  "view": "Form"
+ }
+]

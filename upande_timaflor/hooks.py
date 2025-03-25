@@ -79,6 +79,16 @@ app_license = "mit"
 # 	"filters": "upande_timaflor.utils.jinja_filters"
 # }
 
+#fixtures
+
+fixtures = [
+    {
+        "dt": "Custom DocPerm"
+    },
+    "Client Script"
+]
+
+
 # Installation
 # ------------
 
