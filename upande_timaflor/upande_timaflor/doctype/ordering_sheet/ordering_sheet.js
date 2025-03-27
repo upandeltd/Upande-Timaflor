@@ -65,7 +65,7 @@ function calculate_order_quantities(frm) {
         frappe.model.set_value(row.doctype, row.name, 'tima_7', tima_7);
         frappe.model.set_value(row.doctype, row.name, 'jangwani', jangwani);
 
-        // Log calculated values
+        // log calculated values
         console.log(`Item: ${row.item} | Order Qty: ${order_qty}`);
         console.log({
             "T1": tima_1,
