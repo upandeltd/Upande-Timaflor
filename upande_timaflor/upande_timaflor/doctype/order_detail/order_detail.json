@@ -1,0 +1,138 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-03-25 15:40:50.960646",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "item",
+  "t1_avg",
+  "tima_1",
+  "t2_avg",
+  "tima_2",
+  "t3_avg",
+  "tima_3",
+  "t4_avg",
+  "tima_4",
+  "t5_avg",
+  "tima_5",
+  "t6_avg",
+  "tima_6",
+  "t7_avg",
+  "tima_7",
+  "jangwani_avg",
+  "jangwani"
+ ],
+ "fields": [
+  {
+   "fieldname": "t1_avg",
+   "fieldtype": "Float",
+   "label": "TIMA 1 Avg ",
+   "read_only": 1
+  },
+  {
+   "fieldname": "tima_1",
+   "fieldtype": "Float",
+   "label": "TIMA 1"
+  },
+  {
+   "fieldname": "t2_avg",
+   "fieldtype": "Float",
+   "label": "TIMA 2 Avg ",
+   "read_only": 1
+  },
+  {
+   "fieldname": "tima_2",
+   "fieldtype": "Float",
+   "label": "TIMA 2"
+  },
+  {
+   "fieldname": "t3_avg",
+   "fieldtype": "Float",
+   "label": "TIMA 3 Avg ",
+   "read_only": 1
+  },
+  {
+   "fieldname": "tima_3",
+   "fieldtype": "Float",
+   "label": "TIMA 3"
+  },
+  {
+   "fieldname": "t4_avg",
+   "fieldtype": "Float",
+   "label": "TIMA 4 Avg ",
+   "read_only": 1
+  },
+  {
+   "fieldname": "tima_4",
+   "fieldtype": "Float",
+   "label": "TIMA 4"
+  },
+  {
+   "fieldname": "t5_avg",
+   "fieldtype": "Float",
+   "label": "TIMA 5 Avg ",
+   "read_only": 1
+  },
+  {
+   "fieldname": "tima_5",
+   "fieldtype": "Float",
+   "label": "TIMA 5"
+  },
+  {
+   "fieldname": "t6_avg",
+   "fieldtype": "Float",
+   "label": "TIMA 6 Avg ",
+   "read_only": 1
+  },
+  {
+   "fieldname": "tima_6",
+   "fieldtype": "Float",
+   "label": "TIMA 6"
+  },
+  {
+   "fieldname": "t7_avg",
+   "fieldtype": "Float",
+   "label": "TIMA 7 Avg ",
+   "read_only": 1
+  },
+  {
+   "fieldname": "tima_7",
+   "fieldtype": "Float",
+   "label": "TIMA 7"
+  },
+  {
+   "fieldname": "jangwani_avg",
+   "fieldtype": "Float",
+   "label": "Jangwani Avg",
+   "read_only": 1
+  },
+  {
+   "fieldname": "jangwani",
+   "fieldtype": "Float",
+   "label": "Jangwani"
+  },
+  {
+   "fieldname": "item",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Item",
+   "options": "Item",
+   "reqd": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-03-25 15:41:41.130738",
+ "modified_by": "Administrator",
+ "module": "Upande Timaflor",
+ "name": "Order Detail",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

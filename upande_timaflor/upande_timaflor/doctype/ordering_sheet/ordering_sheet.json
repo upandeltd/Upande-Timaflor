@@ -19,15 +19,13 @@
   },
   {
    "fieldname": "daily_average_consumptiondays",
-   "fieldtype": "Select",
-   "label": "Daily Average Consumption(days)",
-   "options": "30\n60\n90"
+   "fieldtype": "Int",
+   "label": "Daily Average Consumption(days)"
   },
   {
    "fieldname": "ordering_quantity",
-   "fieldtype": "Select",
-   "label": "Ordering Quantity",
-   "options": "30\n60"
+   "fieldtype": "Int",
+   "label": "Ordering Quantity"
   },
   {
    "fieldname": "table_bvnr",
@@ -48,7 +46,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-03-25 14:43:36.863709",
+ "modified": "2025-03-27 15:51:50.495420",
  "modified_by": "Administrator",
  "module": "Upande Timaflor",
  "name": "Ordering Sheet",
