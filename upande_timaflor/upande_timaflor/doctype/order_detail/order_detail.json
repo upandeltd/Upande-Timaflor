@@ -8,21 +8,13 @@
  "field_order": [
   "item",
   "t1_avg",
-  "tima_1",
   "t2_avg",
-  "tima_2",
   "t3_avg",
-  "tima_3",
   "t4_avg",
-  "tima_4",
   "t5_avg",
-  "tima_5",
   "t6_avg",
-  "tima_6",
   "t7_avg",
-  "tima_7",
-  "jangwani_avg",
-  "jangwani"
+  "jangwani_avg"
  ],
  "fields": [
   {
@@ -32,20 +24,10 @@
    "read_only": 1
   },
   {
-   "fieldname": "tima_1",
-   "fieldtype": "Float",
-   "label": "TIMA 1"
-  },
-  {
    "fieldname": "t2_avg",
    "fieldtype": "Float",
    "label": "TIMA 2 Avg ",
    "read_only": 1
-  },
-  {
-   "fieldname": "tima_2",
-   "fieldtype": "Float",
-   "label": "TIMA 2"
   },
   {
    "fieldname": "t3_avg",
@@ -54,20 +36,10 @@
    "read_only": 1
   },
   {
-   "fieldname": "tima_3",
-   "fieldtype": "Float",
-   "label": "TIMA 3"
-  },
-  {
    "fieldname": "t4_avg",
    "fieldtype": "Float",
    "label": "TIMA 4 Avg ",
    "read_only": 1
-  },
-  {
-   "fieldname": "tima_4",
-   "fieldtype": "Float",
-   "label": "TIMA 4"
   },
   {
    "fieldname": "t5_avg",
@@ -76,20 +48,10 @@
    "read_only": 1
   },
   {
-   "fieldname": "tima_5",
-   "fieldtype": "Float",
-   "label": "TIMA 5"
-  },
-  {
    "fieldname": "t6_avg",
    "fieldtype": "Float",
    "label": "TIMA 6 Avg ",
    "read_only": 1
-  },
-  {
-   "fieldname": "tima_6",
-   "fieldtype": "Float",
-   "label": "TIMA 6"
   },
   {
    "fieldname": "t7_avg",
@@ -98,20 +60,10 @@
    "read_only": 1
   },
   {
-   "fieldname": "tima_7",
-   "fieldtype": "Float",
-   "label": "TIMA 7"
-  },
-  {
    "fieldname": "jangwani_avg",
    "fieldtype": "Float",
    "label": "Jangwani Avg",
    "read_only": 1
-  },
-  {
-   "fieldname": "jangwani",
-   "fieldtype": "Float",
-   "label": "Jangwani"
   },
   {
    "fieldname": "item",
@@ -122,11 +74,10 @@
    "reqd": 1
   }
  ],
- "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-03-25 15:41:41.130738",
+ "modified": "2025-03-28 11:51:57.126617",
  "modified_by": "Administrator",
  "module": "Upande Timaflor",
  "name": "Order Detail",

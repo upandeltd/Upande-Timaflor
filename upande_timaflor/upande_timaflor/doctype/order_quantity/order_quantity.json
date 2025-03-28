@@ -1,0 +1,85 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-03-28 08:05:07.865265",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "order_quantity_section",
+  "item",
+  "tima_1",
+  "tima_2",
+  "tima_3",
+  "tima_4",
+  "tima_5",
+  "tima_6",
+  "tima_7",
+  "jangwani"
+ ],
+ "fields": [
+  {
+   "fieldname": "order_quantity_section",
+   "fieldtype": "Section Break",
+   "label": "Order Quantity"
+  },
+  {
+   "fieldname": "tima_1",
+   "fieldtype": "Float",
+   "label": "TIMA 1"
+  },
+  {
+   "fieldname": "tima_2",
+   "fieldtype": "Float",
+   "label": "TIMA 2"
+  },
+  {
+   "fieldname": "tima_3",
+   "fieldtype": "Float",
+   "label": "TIMA 3"
+  },
+  {
+   "fieldname": "tima_4",
+   "fieldtype": "Float",
+   "label": "TIMA 4"
+  },
+  {
+   "fieldname": "tima_5",
+   "fieldtype": "Float",
+   "label": "TIMA 5"
+  },
+  {
+   "fieldname": "tima_6",
+   "fieldtype": "Float",
+   "label": "TIMA 6"
+  },
+  {
+   "fieldname": "tima_7",
+   "fieldtype": "Float",
+   "label": "TIMA 7"
+  },
+  {
+   "fieldname": "jangwani",
+   "fieldtype": "Float",
+   "label": "Jangwani"
+  },
+  {
+   "fieldname": "item",
+   "fieldtype": "Link",
+   "label": "Item",
+   "options": "Item"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-03-28 11:47:05.755769",
+ "modified_by": "Administrator",
+ "module": "Upande Timaflor",
+ "name": "Order Quantity",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

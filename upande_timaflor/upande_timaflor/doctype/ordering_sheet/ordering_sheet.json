@@ -10,7 +10,7 @@
   "daily_average_consumptiondays",
   "ordering_quantity",
   "table_bvnr",
-  "amended_from"
+  "order_quantity"
  ],
  "fields": [
   {
@@ -30,23 +30,20 @@
   {
    "fieldname": "table_bvnr",
    "fieldtype": "Table",
+   "label": "Average Consumption",
    "options": "Order Detail"
   },
   {
-   "fieldname": "amended_from",
-   "fieldtype": "Link",
-   "label": "Amended From",
-   "no_copy": 1,
-   "options": "Ordering Sheet",
-   "print_hide": 1,
-   "read_only": 1,
-   "search_index": 1
+   "fieldname": "order_quantity",
+   "fieldtype": "Table",
+   "label": "Order Quantity",
+   "options": "Order Quantity"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-03-27 15:51:50.495420",
+ "modified": "2025-03-28 08:08:27.010609",
  "modified_by": "Administrator",
  "module": "Upande Timaflor",
  "name": "Ordering Sheet",

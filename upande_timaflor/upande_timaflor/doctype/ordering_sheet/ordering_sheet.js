@@ -19,9 +19,29 @@ frappe.ui.form.on('Ordering Sheet', {
                     callback: function(r) {
                         if (!r.exc && r.message !== undefined) {
                             console.log(`API Response for ${row.item}:`, r.message);
-                            frappe.model.set_value(row.doctype, row.name, 't1_avg', r.message);
-                        } else {
-                            console.log(`API Failed for ${row.item}`);
+                            const farmMap = {
+                                "Tima1": "t1_avg",
+                                "Tima2": "t2_avg",
+                                "Tima3": "t3_avg",
+                                "Tima4": "t4_avg",
+                                "Tima5": "t5_avg",
+                                "Tima6": "t6_avg",
+                                "Tima7": "t7_avg",
+                                //"Jangwani": "jangwani_avg"
+                            };
+
+                            // Initialize averages to 0
+                            Object.values(farmMap).forEach(field => {
+                                frappe.model.set_value(row.doctype, row.name, field, 0);
+                            });
+
+                            // Update averages in table_bvnr
+                            Object.entries(r.message).forEach(([farm, avg]) => {
+                                const field = farmMap[farm];
+                                if (field) {
+                                    frappe.model.set_value(row.doctype, row.name, field, avg);
+                                }
+                            });
                         }
                         resolve();
                     }
@@ -32,7 +52,8 @@ frappe.ui.form.on('Ordering Sheet', {
         Promise.all(requests).then(() => {
             console.log("API Calls Finished, Now Calculating Quantities");
             calculate_order_quantities(frm);
-            frm.refresh_field("table_bvnr");  
+            frm.refresh_field("table_bvnr");
+            frm.refresh_field("order_quantity"); 
         });
     }
 });
@@ -42,44 +63,26 @@ function calculate_order_quantities(frm) {
 
     if (!frm.doc.ordering_quantity || !frm.doc.table_bvnr) return;
 
-    frm.doc.table_bvnr.forEach(row => {
+    // Clear existing order quantity entries
+    frm.doc.order_quantity = [];
+
+    frm.doc.table_bvnr.forEach(avg_row => {
         let order_qty = frm.doc.ordering_quantity;
+        let order_row = frappe.model.add_child(frm.doc, "Order Quantity", "order_quantity");
+        
+        // Copy item from averages table
+        order_row.item = avg_row.item;
 
-        // Calculate values
-        let tima_1 = row.t1_avg * order_qty || 0;
-        let tima_2 = row.t2_avg * order_qty || 0;
-        let tima_3 = row.t3_avg * order_qty || 0;
-        let tima_4 = row.t4_avg * order_qty || 0;
-        let tima_5 = row.t5_avg * order_qty || 0;
-        let tima_6 = row.t6_avg * order_qty || 0;
-        let tima_7 = row.t7_avg * order_qty || 0;
-        let jangwani = row.jangwani_avg * order_qty || 0;
-
-        // Update fields
-        frappe.model.set_value(row.doctype, row.name, 'tima_1', tima_1);
-        frappe.model.set_value(row.doctype, row.name, 'tima_2', tima_2);
-        frappe.model.set_value(row.doctype, row.name, 'tima_3', tima_3);
-        frappe.model.set_value(row.doctype, row.name, 'tima_4', tima_4);
-        frappe.model.set_value(row.doctype, row.name, 'tima_5', tima_5);
-        frappe.model.set_value(row.doctype, row.name, 'tima_6', tima_6);
-        frappe.model.set_value(row.doctype, row.name, 'tima_7', tima_7);
-        frappe.model.set_value(row.doctype, row.name, 'jangwani', jangwani);
-
-        // log calculated values
-        console.log(`Item: ${row.item} | Order Qty: ${order_qty}`);
-        console.log({
-            "T1": tima_1,
-            "T2": tima_2,
-            "T3": tima_3,
-            "T4": tima_4,
-            "T5": tima_5,
-            "T6": tima_6,
-            "T7": tima_7,
-            "Jangwani": jangwani
-        });
-
-        console.log(`Updated ${row.item}: Order Qty Calculated`);
+        // Calculate and set order quantities
+        order_row.tima_1 = (avg_row.t1_avg || 0) * order_qty;
+        order_row.tima_2 = (avg_row.t2_avg || 0) * order_qty;
+        order_row.tima_3 = (avg_row.t3_avg || 0) * order_qty;
+        order_row.tima_4 = (avg_row.t4_avg || 0) * order_qty;
+        order_row.tima_5 = (avg_row.t5_avg || 0) * order_qty;
+        order_row.tima_6 = (avg_row.t6_avg || 0) * order_qty;
+        order_row.tima_7 = (avg_row.t7_avg || 0) * order_qty;
+        //order_row.Jangwani = (avg_row.jangwani_avg || 0) * order_qty;
     });
 
-    frm.refresh_field("table_bvnr");
+    frm.refresh_field("order_quantity");
 }
