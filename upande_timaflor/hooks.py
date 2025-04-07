@@ -92,8 +92,7 @@ fixtures = [
         "dt": "Custom DocPerm"
     },
     "Client Script",
-    "Print Format",
-    {"dt": "Daily Minimum Consumption"}
+    "Print Format"
 ]
 
 
