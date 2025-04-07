@@ -2,6 +2,39 @@
  {
   "docstatus": 0,
   "doctype": "Client Script",
+  "dt": "Stock Entry",
+  "enabled": 1,
+  "modified": "2025-03-26 03:54:33.025099",
+  "module": null,
+  "name": "Vehicle/Machinery",
+  "script": "frappe.ui.form.on('Stock Entry', {\n    custom_issue_to_type(frm) { \n        // Hide both fields by default\n        frm.toggle_display('custom_type_of_vehicle', false);\n        frm.toggle_display('custom_type_of_machinery', false);\n\n        // Show fields based on selection\n        if (frm.doc.custom_issue_to_type === 'Vehicle') {\n            frm.toggle_display('custom_type_of_vehicle', true);\n        } \n        else if (frm.doc.custom_issue_to_type === 'Machinery') {\n            frm.toggle_display('custom_type_of_machinery', true);\n        }\n\n        // Refresh fields\n        frm.refresh_field('custom_type_of_vehicle');\n        frm.refresh_field('custom_type_of_machinery');\n    },\n    refresh(frm) {\n        // Hide fields on form load\n        frm.toggle_display(['custom_type_of_vehicle', 'custom_type_of_machinery'], false);\n    }\n});",
+  "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Farm Item Analysis",
+  "enabled": 1,
+  "modified": "2025-03-26 06:33:39.512726",
+  "module": null,
+  "name": "Farm Items",
+  "script": "frappe.ui.form.on('Farm Item Analysis', {\n    item: function(frm, cdt, cdn) {\n        let row = locals[cdt][cdn];\n        if (row.item) {\n            frappe.call({\n                method: 'farm_item_analysis.get_item_details',\n                args: {\n                    'item': row.item\n                },\n                callback: function(r) {\n                    if (r.message) {\n                        frappe.model.set_value(cdt, cdn, 'total_quantity', r.message.total_quantity);\n                        frappe.model.set_value(cdt, cdn, 'average_per_farm', r.message.average_per_farm);\n                    }\n                }\n            });\n        }\n    }\n});",
+  "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Stock Reconciliation",
+  "enabled": 1,
+  "modified": "2025-04-03 10:42:17.659211",
+  "module": null,
+  "name": "Stock Reconcilliation",
+  "script": "// Custom script for Stock Reconciliation form in Frappe/ERPNext\n// Save this as a Client Script for the \"Stock Reconciliation\" DocType\n\nfrappe.ui.form.on('Stock Reconciliation', {\n    refresh: function(frm) {\n        // Apply color coding to quantity difference column\n        applyColorCoding(frm);\n        \n        // Set up the calculation for differences\n        setupDifferenceCalculation(frm);\n    },\n    \n    after_save: function(frm) {\n        // Reapply color coding after save\n        applyColorCoding(frm);\n    }\n});\n\nfunction setupDifferenceCalculation(frm) {\n    // Set up event handlers for physical_stock_count field\n    frappe.ui.form.on('Stock Reconciliation Item', 'custom_physical_stock_count', function(frm, cdt, cdn) {\n        let row = locals[cdt][cdn];\n        if (row.custom_physical_stock_count !== undefined) {\n            // Calculate difference: physical count - system quantity\n            row.qty_difference = row.custom_physical_stock_count - row.qty;\n            refresh_field('items');\n            applyColorCoding(frm);\n        }\n    });\n    \n    // Initialize physical_stock_count based on qty and existing difference if available\n    frm.doc.items.forEach(function(item) {\n        if (item.qty !== undefined) {\n            // If qty_difference exists, use it to calculate physical_stock_count\n            if (item.qty_difference !== undefined && item.custom_physical_stock_count === undefined) {\n                item.custom_physical_stock_count = item.qty + item.qty_difference;\n            } \n            // If physical_stock_count exists but qty_difference doesn't, calculate difference\n            else if (item.custom_physical_stock_count !== undefined && item.qty_difference === undefined) {\n                item.qty_difference = item.custom_physical_stock_count - item.qty;\n            }\n            // If neither exists, initialize physical_stock_count with qty\n            else if (item.custom_physical_stock_count === undefined) {\n                item.custom_physical_stock_count = item.qty;\n                item.qty_difference = 0;\n            }\n        }\n    });\n    refresh_field('items');\n}\n\nfunction applyColorCoding(frm) {\n    // Apply color coding to quantity difference cells\n    setTimeout(function() {\n        frm.fields_dict.items.grid.grid_rows.forEach(function(row) {\n            const difference = row.doc.qty_difference;\n            \n            if (difference !== undefined && difference !== null) {\n                // Select the cell with qty_difference\n                const $cell = row.columns.qty_difference.$wrapper;\n                \n                // Remove existing color classes\n                $cell.removeClass('text-success text-danger');\n                \n                // Add appropriate color class\n                if (difference > 0) {\n                    $cell.addClass('text-success');\n                } else if (difference < 0) {\n                    $cell.addClass('text-danger');\n                }\n            }\n        });\n    }, 100);\n}\n\n// Add custom CSS for coloring\nfrappe.dom.set_style(`\n    .text-success { color: #28a745 !important; font-weight: bold; }\n    .text-danger { color: #dc3545 !important; font-weight: bold; }\n`);",
+  "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
   "dt": "Item",
   "enabled": 1,
   "modified": "2025-03-21 06:50:53.975796",
