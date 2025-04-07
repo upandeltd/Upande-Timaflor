@@ -1,0 +1,69 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-03-26 08:38:13.872476",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "farm",
+  "variety",
+  "ghse",
+  "area"
+ ],
+ "fields": [
+  {
+   "fieldname": "farm",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Farm",
+   "options": "Farm",
+   "reqd": 1
+  },
+  {
+   "fieldname": "variety",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Variety",
+   "reqd": 1
+  },
+  {
+   "fieldname": "ghse",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "GHSE",
+   "reqd": 1
+  },
+  {
+   "fieldname": "area",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Area",
+   "non_negative": 1,
+   "reqd": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-04-01 16:54:22.497794",
+ "modified_by": "Administrator",
+ "module": "Upande Timaflor",
+ "name": "Greenhouse",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

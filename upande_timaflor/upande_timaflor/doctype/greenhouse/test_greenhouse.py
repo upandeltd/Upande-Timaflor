@@ -5,5 +5,5 @@
 from frappe.tests.utils import FrappeTestCase
 
 
-class TestOrderingSheet(FrappeTestCase):
+class TestGreenhouse(FrappeTestCase):
 	pass
