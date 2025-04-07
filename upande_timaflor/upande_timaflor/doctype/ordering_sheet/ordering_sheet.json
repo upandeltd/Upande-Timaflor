@@ -9,8 +9,12 @@
   "section_break_7jlu",
   "daily_average_consumptiondays",
   "ordering_quantity",
+  "supplier",
   "table_bvnr",
-  "order_quantity"
+  "daily_maximum_consumption",
+  "daily_minimum_consumption",
+  "order_quantity",
+  "amended_from"
  ],
  "fields": [
   {
@@ -38,12 +42,40 @@
    "fieldtype": "Table",
    "label": "Order Quantity",
    "options": "Order Quantity"
+  },
+  {
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "label": "Supplier",
+   "options": "Supplier"
+  },
+  {
+   "fieldname": "daily_maximum_consumption",
+   "fieldtype": "Table",
+   "label": "Daily Maximum Consumption",
+   "options": "Daily Maximum Consumption"
+  },
+  {
+   "fieldname": "daily_minimum_consumption",
+   "fieldtype": "Table",
+   "label": "Daily Minimum Consumption",
+   "options": "Daily Minimum Consumption"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Ordering Sheet",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-03-28 08:08:27.010609",
+ "modified": "2025-04-07 06:53:23.737665",
  "modified_by": "Administrator",
  "module": "Upande Timaflor",
  "name": "Ordering Sheet",
