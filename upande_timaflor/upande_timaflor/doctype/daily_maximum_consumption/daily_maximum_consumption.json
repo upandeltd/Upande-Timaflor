@@ -1,0 +1,89 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-04-07 18:14:39.147680",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "item",
+  "t1_avg",
+  "t2_avg",
+  "t3_avg",
+  "t4_avg",
+  "t5_avg",
+  "t6_avg",
+  "t7_avg",
+  "jangwani_avg"
+ ],
+ "fields": [
+  {
+   "fieldname": "item",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Item",
+   "options": "Item",
+   "reqd": 1
+  },
+  {
+   "fieldname": "t1_avg",
+   "fieldtype": "Float",
+   "label": "TIMA 1 Avg ",
+   "read_only": 1
+  },
+  {
+   "fieldname": "t2_avg",
+   "fieldtype": "Float",
+   "label": "TIMA 2 Avg ",
+   "read_only": 1
+  },
+  {
+   "fieldname": "t3_avg",
+   "fieldtype": "Float",
+   "label": "TIMA 3 Avg ",
+   "read_only": 1
+  },
+  {
+   "fieldname": "t4_avg",
+   "fieldtype": "Float",
+   "label": "TIMA 4 Avg ",
+   "read_only": 1
+  },
+  {
+   "fieldname": "t5_avg",
+   "fieldtype": "Float",
+   "label": "TIMA 5 Avg ",
+   "read_only": 1
+  },
+  {
+   "fieldname": "t6_avg",
+   "fieldtype": "Float",
+   "label": "TIMA 6 Avg ",
+   "read_only": 1
+  },
+  {
+   "fieldname": "t7_avg",
+   "fieldtype": "Float",
+   "label": "TIMA 7 Avg ",
+   "read_only": 1
+  },
+  {
+   "fieldname": "jangwani_avg",
+   "fieldtype": "Float",
+   "label": "Jangwani Avg",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-04-07 18:14:39.147680",
+ "modified_by": "Administrator",
+ "module": "Upande Timaflor",
+ "name": "Daily Maximum Consumption",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
