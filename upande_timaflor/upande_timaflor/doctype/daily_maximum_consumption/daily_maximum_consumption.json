@@ -7,14 +7,14 @@
  "engine": "InnoDB",
  "field_order": [
   "item",
-  "t1_avg",
-  "t2_avg",
-  "t3_avg",
-  "t4_avg",
-  "t5_avg",
-  "t6_avg",
-  "t7_avg",
-  "jangwani_avg"
+  "tima_1_daily_avg",
+  "tima_2_daily_avg",
+  "tima_3_daily_avg",
+  "tima_4_daily_avg",
+  "tima_5_daily_avg",
+  "tima_6_daily_avg",
+  "tima_7_daily_avg",
+  "jangwani_daily_avg"
  ],
  "fields": [
   {
@@ -26,49 +26,49 @@
    "reqd": 1
   },
   {
-   "fieldname": "t1_avg",
+   "fieldname": "tima_1_daily_avg",
    "fieldtype": "Float",
    "label": "TIMA 1 Avg ",
    "read_only": 1
   },
   {
-   "fieldname": "t2_avg",
+   "fieldname": "tima_2_daily_avg",
    "fieldtype": "Float",
    "label": "TIMA 2 Avg ",
    "read_only": 1
   },
   {
-   "fieldname": "t3_avg",
+   "fieldname": "tima_3_daily_avg",
    "fieldtype": "Float",
    "label": "TIMA 3 Avg ",
    "read_only": 1
   },
   {
-   "fieldname": "t4_avg",
+   "fieldname": "tima_4_daily_avg",
    "fieldtype": "Float",
    "label": "TIMA 4 Avg ",
    "read_only": 1
   },
   {
-   "fieldname": "t5_avg",
+   "fieldname": "tima_5_daily_avg",
    "fieldtype": "Float",
    "label": "TIMA 5 Avg ",
    "read_only": 1
   },
   {
-   "fieldname": "t6_avg",
+   "fieldname": "tima_6_daily_avg",
    "fieldtype": "Float",
    "label": "TIMA 6 Avg ",
    "read_only": 1
   },
   {
-   "fieldname": "t7_avg",
+   "fieldname": "tima_7_daily_avg",
    "fieldtype": "Float",
    "label": "TIMA 7 Avg ",
    "read_only": 1
   },
   {
-   "fieldname": "jangwani_avg",
+   "fieldname": "jangwani_daily_avg",
    "fieldtype": "Float",
    "label": "Jangwani Avg",
    "read_only": 1
@@ -77,7 +77,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-04-07 18:14:39.147680",
+ "modified": "2025-04-09 09:38:53.268410",
  "modified_by": "Administrator",
  "module": "Upande Timaflor",
  "name": "Daily Maximum Consumption",
