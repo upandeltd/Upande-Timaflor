@@ -2,6 +2,17 @@
  {
   "docstatus": 0,
   "doctype": "Client Script",
+  "dt": "Supplier Quotation",
+  "enabled": 1,
+  "modified": "2025-04-09 00:41:15.335214",
+  "module": "Upande Timaflor",
+  "name": "Update the RFQ from child table to SQ",
+  "script": "frappe.ui.form.on('Supplier Quotation', {\n    refresh: function(frm) {\n       \n        if (frm.doc.items && frm.doc.items.length > 0) {\n            let request_for_quotation = frm.doc.items[0].request_for_quotation; \n            frm.set_value('custom_request_for_quotation', request_for_quotation); \n        }\n    },\n\n    validate: function(frm) {\n        if (frm.doc.items && frm.doc.items.length > 0) {\n            let request_for_quotation = frm.doc.items[0].request_for_quotation; \n            frm.set_value('custom_request_for_quotation', request_for_quotation); \n        }\n    }\n});\n",
+  "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
   "dt": "Stock Entry",
   "enabled": 1,
   "modified": "2025-03-26 03:54:33.025099",
