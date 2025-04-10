@@ -8,14 +8,14 @@
  "field_order": [
   "section_break_mmxd",
   "item",
-  "t1_avg",
-  "t2_avg",
-  "t3_avg",
-  "t4_avg",
-  "t5_avg",
-  "t6_avg",
-  "t7_avg",
-  "jangwani_avg"
+  "tima_1_daily_avg",
+  "tima_2_daily_avg",
+  "tima_3_daily_avg",
+  "tima_4_daily_avg",
+  "tima_5_daily_avg",
+  "tima_6_daily_avg",
+  "tima_7_daily_avg",
+  "jangwani_daily_avg"
  ],
  "fields": [
   {

@@ -8,14 +8,14 @@
  "field_order": [
   "section_break_qmrc",
   "item",
-  "t1_avg",
-  "t2_avg",
-  "t3_avg",
-  "t4_avg",
-  "t5_avg",
-  "t6_avg",
-  "t7_avg",
-  "jangwani_avg"
+  "tima_1_minimum",
+  "tima_2_minimum",
+  "tima_3_minimum",
+  "tima_4_minimum",
+  "tima_5_minimum",
+  "tima_6_minimum",
+  "tima_7_minimum",
+  "jangwani_minimum"
  ],
  "fields": [
   {
