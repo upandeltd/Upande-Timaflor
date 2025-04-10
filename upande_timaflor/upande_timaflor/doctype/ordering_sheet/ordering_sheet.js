@@ -1,6 +1,7 @@
+//Ordering sheet 
 frappe.ui.form.on('Ordering Sheet', {
     refresh: function(frm) {
-        // Modified PO Creation Button with Supplier Dialog and document status check
+        // PO Creation Button 
         frm.add_custom_button(__('Create Purchase Order'), function() {
             // Check document status first
             if (frm.doc.docstatus === 0) {
