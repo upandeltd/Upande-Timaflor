@@ -1,0 +1,26 @@
+[
+ {
+  "biometric_id": "2",
+  "docstatus": 1,
+  "doctype": "Biometric Signature",
+  "employee": "HR-EMP-00001",
+  "employee_name": "Kevin Mutinda Kamodo",
+  "modified": "2025-04-11 11:12:42.373658",
+  "name": "5cuptsl8ne",
+  "parent": "MAT-MR-2025-00002",
+  "parentfield": "custom_biometric_data",
+  "parenttype": "Material Request"
+ },
+ {
+  "biometric_id": "2",
+  "docstatus": 0,
+  "doctype": "Biometric Signature",
+  "employee": "HR-EMP-00001",
+  "employee_name": "Kevin Mutinda Kamodo",
+  "modified": "2025-04-11 11:53:06.498495",
+  "name": "t3p8pok391",
+  "parent": "MAT-MR-2025-00003",
+  "parentfield": "custom_biometric_data",
+  "parenttype": "Material Request"
+ }
+]
