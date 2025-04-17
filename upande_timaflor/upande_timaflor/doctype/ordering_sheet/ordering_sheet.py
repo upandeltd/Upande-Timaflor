@@ -254,16 +254,15 @@ def create_rfq(ordering_sheet):
                 "item_name": item_details.item_name if item_details else "",
                 "description": item_details.description if item_details else "",
                 "uom": item_details.stock_uom if item_details else "Nos",
-                "conversion_factor": 1.0,  # Added mandatory conversion_factor
-                "stock_uom": item_details.stock_uom if item_details else "Nos",  # Added stock_uom
+                "conversion_factor": 1.0,  
+                "stock_uom": item_details.stock_uom if item_details else "Nos",  
                 "warehouse": frappe.db.get_single_value("Stock Settings", "default_warehouse") or ""
             })
     
     # Insert as draft without validations
     rfq.insert(ignore_permissions=True, ignore_mandatory=True)
     
-    # Add a note in the document about missing suppliers
-    rfq.add_comment('Comment', 'Created without suppliers - please add suppliers before submitting')
+    
     
     frappe.db.commit()
     return rfq.name
