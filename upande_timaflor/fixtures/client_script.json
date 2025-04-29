@@ -1,24 +1,24 @@
 [
- {
-  "docstatus": 0,
-  "doctype": "Client Script",
-  "dt": "Material Request",
-  "enabled": 1,
-  "modified": "2025-05-01 21:21:41.699121",
-  "module": "Upande Timaflor",
-  "name": "Biometric Signature",
-  "script": "frappe.ui.form.on('Material Request', {\n    refresh(frm) {\n        handle_biometric_logic(frm);\n\n        // Passive dashboard comment instead of popup\n        if (frm.doc.docstatus === 1 && frm.doc.material_request_type === \"Material Issue\") {\n            if (!has_biometric_signature(frm)) {\n                frm.dashboard.add_comment(__('Consider adding a biometric signature for verification.'), 'yellow');\n            }\n        }\n    },\n\n    material_request_type(frm) {\n        handle_biometric_logic(frm);\n    },\n\n    // No validation or message when biometric is missing\n    make_stock_entry: function(frm) {\n        let employee = null;\n        if (frm.doc.custom_biometric_data && frm.doc.custom_biometric_data.length > 0) {\n            employee = frm.doc.custom_biometric_data[0].employee;\n        }\n\n        frappe.model.open_mapped_doc({\n            method: \"erpnext.stock.doctype.material_request.material_request.make_stock_entry\",\n            frm: frm,\n            callback: function(r) {\n                if (r.doc && employee) {\n                    frappe.model.set_value(r.doc.doctype, r.doc.name, \"employee\", employee);\n                }\n            }\n        });\n    }\n});\n\nfunction handle_biometric_logic(frm) {\n    frm.set_df_property(\"custom_biometric_data\", \"hidden\", 1);\n    frm.set_df_property(\"custom_biometric_data\", \"reqd\", 0);\n    frm.remove_custom_button('Add Biometric Signature');\n\n    if (frm.doc.docstatus === 1 && frm.doc.material_request_type === \"Material Issue\") {\n        frm.set_df_property(\"custom_biometric_data\", \"hidden\", 0);\n        if (!has_biometric_signature(frm)) {\n            add_biometric_button(frm);\n        }\n    }\n}\n\nfunction has_biometric_signature(frm) {\n    return (frm.doc.custom_biometric_data || []).length > 0;\n}\n\nfunction add_biometric_button(frm) {\n    frm.add_custom_button('Add Biometric Signature', async () => {\n        if (has_biometric_signature(frm)) {\n            frappe.msgprint('Biometric data already added.');\n            frm.remove_custom_button('Add Biometric Signature');\n            return;\n        }\n\n        try {\n            const result = await frappe.call({\n                method: 'get_latest_biometric_log'\n            });\n\n            if (result && result.message) {\n                const log = result.message;\n                const row = frappe.model.add_child(frm.doc, 'Biometric Signature', 'custom_biometric_data');\n                row.employee = log.employee;\n                row.employee_name = log.employee_name;\n                row.biometric_id = log.biometric_id;\n                row.timestamp = log.timestamp;\n\n                frm.refresh_field('custom_biometric_data');\n                frappe.msgprint('Biometric data added.');\n                frm.remove_custom_button('Add Biometric Signature');\n            }\n            // Silently ignore if no biometric log found\n        } catch (e) {\n            frappe.msgprint(__('Error fetching biometric log: ') + e.message);\n        }\n    });\n}\n",
-  "view": "Form"
- },
- {
-  "docstatus": 0,
-  "doctype": "Client Script",
-  "dt": "Material Request",
-  "enabled": 1,
-  "modified": "2025-05-01 21:08:15.591979",
-  "module": "Upande Timaflor",
-  "name": "Material Assigned To Employee",
-  "script": "frappe.ui.form.on('Material Request', {\n    refresh(frm) {\n        handle_employee_assigned_logic(frm);\n    },\n\n    material_request_type(frm) {\n        handle_employee_assigned_logic(frm);\n    }\n});\n\nfunction handle_employee_assigned_logic(frm) {\n    frm.set_df_property(\"custom_employee_assigned_to\", \"hidden\", 1);\n    frm.set_df_property(\"custom_employee_assigned_to\", \"reqd\", 0);\n\n    if (frm.doc.material_request_type === \"Material Issue\") {\n        frm.set_df_property(\"custom_employee_assigned_to\", \"hidden\", 0);\n        frm.set_df_property(\"custom_employee_assigned_to\", \"reqd\", 1);\n    }\n}\n",
-  "view": "Form"
- }
+  {
+    "docstatus": 0,
+    "doctype": "Client Script",
+    "dt": "Material Request",
+    "enabled": 1,
+    "modified": "2025-05-01 21:21:41.699121",
+    "module": "Upande Timaflor",
+    "name": "Biometric Signature",
+    "script": "frappe.ui.form.on('Material Request', {\n    refresh(frm) {\n        handle_biometric_logic(frm);\n\n        // Passive dashboard comment instead of popup\n        if (frm.doc.docstatus === 1 && frm.doc.material_request_type === \"Material Issue\") {\n            if (!has_biometric_signature(frm)) {\n                frm.dashboard.add_comment(__('Consider adding a biometric signature for verification.'), 'yellow');\n            }\n        }\n    },\n\n    material_request_type(frm) {\n        handle_biometric_logic(frm);\n    },\n\n    make_stock_entry: function(frm) {\n        let employee = null;\n        if (frm.doc.custom_biometric_data && frm.doc.custom_biometric_data.length > 0) {\n            employee = frm.doc.custom_biometric_data[0].employee;\n        }\n\n        frappe.model.open_mapped_doc({\n            method: \"erpnext.stock.doctype.material_request.material_request.make_stock_entry\",\n            frm: frm,\n            callback: function(r) {\n                if (r.doc && employee) {\n                    frappe.model.set_value(r.doc.doctype, r.doc.name, \"employee\", employee);\n                }\n            }\n        });\n    }\n});\n\nfunction handle_biometric_logic(frm) {\n    frm.set_df_property(\"custom_biometric_data\", \"hidden\", 1);\n    frm.set_df_property(\"custom_biometric_data\", \"reqd\", 0);\n    frm.remove_custom_button('Add Biometric Signature');\n\n    if (frm.doc.docstatus === 1 && frm.doc.material_request_type === \"Material Issue\") {\n        frm.set_df_property(\"custom_biometric_data\", \"hidden\", 0);\n        if (!has_biometric_signature(frm)) {\n            add_biometric_button(frm);\n        }\n    }\n}\n\nfunction has_biometric_signature(frm) {\n    return (frm.doc.custom_biometric_data || []).length > 0;\n}\n\nfunction add_biometric_button(frm) {\n    frm.add_custom_button('Add Biometric Signature', async () => {\n        if (has_biometric_signature(frm)) {\n            frappe.msgprint('Biometric data already added.');\n            frm.remove_custom_button('Add Biometric Signature');\n            return;\n        }\n\n        try {\n            const result = await frappe.call({\n                method: 'get_latest_biometric_log'\n            });\n\n            if (result && result.message) {\n                const log = result.message;\n                const row = frappe.model.add_child(frm.doc, 'Biometric Signature', 'custom_biometric_data');\n                row.employee = log.employee;\n                row.employee_name = log.employee_name;\n                row.biometric_id = log.biometric_id;\n                row.timestamp = log.timestamp;\n\n                frm.refresh_field('custom_biometric_data');\n                frappe.msgprint('Biometric data added.');\n                frm.remove_custom_button('Add Biometric Signature');\n            }\n            // Silently ignore if no biometric log found\n        } catch (e) {\n            frappe.msgprint(__('Error fetching biometric log: ') + e.message);\n        }\n    });\n}\n",
+    "view": "Form"
+  },
+  {
+    "docstatus": 0,
+    "doctype": "Client Script",
+    "dt": "Material Request",
+    "enabled": 1,
+    "modified": "2025-05-01 21:08:15.591979",
+    "module": "Upande Timaflor",
+    "name": "Material Assigned To Employee",
+    "script": "frappe.ui.form.on('Material Request', {\n    refresh(frm) {\n        handle_employee_assigned_logic(frm);\n    },\n\n    material_request_type(frm) {\n        handle_employee_assigned_logic(frm);\n    }\n});\n\nfunction handle_employee_assigned_logic(frm) {\n    frm.set_df_property(\"custom_employee_assigned_to\", \"hidden\", 1);\n    frm.set_df_property(\"custom_employee_assigned_to\", \"reqd\", 0);\n\n    if (frm.doc.material_request_type === \"Material Issue\") {\n        frm.set_df_property(\"custom_employee_assigned_to\", \"hidden\", 0);\n        frm.set_df_property(\"custom_employee_assigned_to\", \"reqd\", 1);\n    }\n}\n",
+    "view": "Form"
+  }
 ]

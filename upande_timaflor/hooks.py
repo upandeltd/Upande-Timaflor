@@ -86,6 +86,14 @@ from frappe.utils import flt
 
 fixtures = [
     {
+        "dt": "Server Script",
+        "filters": [
+            ["name", "in", [
+                "get_latest_biometric_log"
+            ]]
+        ]
+    },
+    {
         "dt": "Client Script",
         "filters": [
             ["name", "in", [
@@ -111,31 +119,29 @@ fixtures = [
     {
         "dt": "DocType",
         "filters": [
-<<<<<<< HEAD
             ["name", "in", [
                 "Biometric Log",
                 "Biometric Signature",
-                "Assigned To Material"
+                "Assigned To Material",
+                "Greenhouse",
+                "Ordering Sheet",
+                "Order Detail",
+                "Order Quantity",
+                "Daily Maximum Consumption",
+                "Daily Minimum Consumption",
+                "Fertilizer Order Sheet",
+                "Fertilizer Stock Levels",
+                "Chemical Stock Levels",
+                "Chemical Order Sheet",
+                "Chemical Order Quantity",
+                "Area To Spray",
+                "Chemical Sprays",
+                "Fertilizer Average Consumption",
+                "Stock Levels",
+                "Quantity To Order",
+                "Chemical Target"
             ]]
-=======
-            ["name", "in", ["Biometric Log", "Biometric Signature", "Greenhouse", "Ordering Sheet", "Order Detail", "Order Quantity", "Daily Maximum Consumption", "Daily Minimum Consumption", "Fertilizer Order Sheet", "Fertilizer Stock Levels", "Chemical Stock Levels", "Chemical Order Sheet", "Chemical Order Quantity", "Area To Spray", "Chemical Sprays", "Fertilizer Average Consumption", "Stock Levels", "Quantity To Order", "Chemical Target"]]
->>>>>>> af5d935 (Updated Fixtures)
         ]
-    },
-    {
-        "dt": "Print Format"
-    },
-    {
-        "dt": "Greenhouse"
-    }
-]
-
-fixtures = [
-    {
-        "doctype": "Greenhouse",
-        "filters": {
-            "name": ["is", "set"]  
-        }
     }
 ]
 
