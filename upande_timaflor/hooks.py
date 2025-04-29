@@ -6,7 +6,6 @@ app_email = "newton@upande.com"
 app_license = "mit"
 
 
-# Required imports (add at the top)
 import frappe
 from frappe import _
 from frappe.utils import flt
@@ -92,7 +91,10 @@ fixtures = [
         "dt": "Custom DocPerm"
     },
     "Client Script",
-    "Print Format"
+    "Print Format",
+    
+    {"dt": "Greenhouse"
+    }
 ]
 
 
