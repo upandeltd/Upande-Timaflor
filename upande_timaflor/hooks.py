@@ -6,7 +6,6 @@ app_email = "newton@upande.com"
 app_license = "mit"
 
 
-# Required imports (add at the top)
 import frappe
 from frappe import _
 from frappe.utils import flt
@@ -85,21 +84,13 @@ from frappe.utils import flt
 # 	"filters": "upande_timaflor.utils.jinja_filters"
 # }
 
-#fixtures
 fixtures = [
-    {
-        "dt": "Server Script",
-        "filters": [
-            ["name", "in", [
-                "get_latest_biometric_log"
-            ]]
-        ]
-    },
     {
         "dt": "Client Script",
         "filters": [
             ["name", "in", [
-                "Biometric Signature","Material Assigned To Employee"
+                "Biometric Signature",
+                "Material Assigned To Employee"
             ]]
         ]
     },
@@ -126,6 +117,12 @@ fixtures = [
                 "Assigned To Material"
             ]]
         ]
+    },
+    {
+        "dt": "Print Format"
+    },
+    {
+        "dt": "Greenhouse"
     }
 ]
 

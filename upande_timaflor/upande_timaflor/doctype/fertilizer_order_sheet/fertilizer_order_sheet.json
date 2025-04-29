@@ -1,0 +1,79 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:Order-{#####}",
+ "creation": "2025-04-28 22:22:08.779738",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_7jlu",
+  "average_consumption",
+  "stock_wantedweeks",
+  "weekly_average_consumption",
+  "stock_levels",
+  "order_quantity"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_7jlu",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "order_quantity",
+   "fieldtype": "Table",
+   "label": "Order Quantity",
+   "options": "Quantity To Order"
+  },
+  {
+   "fieldname": "average_consumption",
+   "fieldtype": "Int",
+   "label": "Average Consumption"
+  },
+  {
+   "fieldname": "stock_wantedweeks",
+   "fieldtype": "Int",
+   "label": "Stock Wanted(Weeks)"
+  },
+  {
+   "fieldname": "weekly_average_consumption",
+   "fieldtype": "Table",
+   "label": "Weekly Average Consumption",
+   "options": "Fertilizer Average Consumption"
+  },
+  {
+   "fieldname": "stock_levels",
+   "fieldtype": "Table",
+   "label": "Stock Levels",
+   "options": "Fertilizer Stock Levels"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2025-04-28 22:25:23.828048",
+ "modified_by": "esperance@upande.com",
+ "module": "Upande Timaflor",
+ "name": "Fertilizer Order Sheet",
+ "naming_rule": "Expression",
+ "owner": "esperance@upande.com",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
