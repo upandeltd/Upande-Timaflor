@@ -89,17 +89,36 @@ from frappe.utils import flt
 
 fixtures = [
     {
-        "dt": "DocType",
+        "dt": "Server Script",
         "filters": [
-            ["name", "in", ["Biometric Log", "Biometric Signature"]]
+            ["name", "in", [
+                "get_latest_biometric_log"
+            ]]
         ]
     },
-    "Client Script",
-    "Server Script",
-    "Workspace"
+    {
+        "dt": "Client Script",
+        "filters": [
+            ["name", "in", [
+                "Biometric Signature"
+            ]]
+        ]
+    },
+    {
+        "dt": "Workspace",
+        "filters": [
+            ["name", "in", [
+                "Production Manager Workspace",
+                "PM Manufacturing",
+                "PM Stock",
+                "Storekeeper Workspace",
+                "Stocks Workspace",
+                "Accounting Workspace",
+                "General Manager Home"
+            ]]
+        ]
+    }
 ]
-
-
 
 
 # Installation
