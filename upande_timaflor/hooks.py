@@ -86,7 +86,6 @@ from frappe.utils import flt
 # }
 
 #fixtures
-
 fixtures = [
     {
         "dt": "Server Script",
@@ -100,7 +99,7 @@ fixtures = [
         "dt": "Client Script",
         "filters": [
             ["name", "in", [
-                "Biometric Signature"
+                "Biometric Signature","Material Assigned To Employee"
             ]]
         ]
     },
@@ -115,6 +114,16 @@ fixtures = [
                 "Stocks Workspace",
                 "Accounting Workspace",
                 "General Manager Home"
+            ]]
+        ]
+    },
+    {
+        "dt": "DocType",
+        "filters": [
+            ["name", "in", [
+                "Biometric Log",
+                "Biometric Signature",
+                "Assigned To Material"
             ]]
         ]
     }
