@@ -84,6 +84,7 @@ from frappe.utils import flt
 # 	"filters": "upande_timaflor.utils.jinja_filters"
 # }
 
+# hooks.py
 fixtures = [
     {
         "dt": "Server Script",
@@ -99,7 +100,7 @@ fixtures = [
             ["name", "in", [
                 "Biometric Signature",
                 "Material Assigned To Employee"
-            ]]
+           ]]
         ]
     },
     {
@@ -117,8 +118,9 @@ fixtures = [
         ]
     },
     {
+
         "dt": "DocType",
-        "filters": [
+       "filters": [
             ["name", "in", [
                 "Biometric Log",
                 "Biometric Signature",
@@ -144,8 +146,6 @@ fixtures = [
         ]
     }
 ]
-
-
 
 # Installation
 # ------------
