@@ -97,6 +97,16 @@ fixtures = [
     "Print Format"
 ]
 
+fixtures = [
+    {
+        "doctype": "Greenhouse",
+        "filters": {
+            "name": ["is", "set"]  
+        }
+    }
+]
+
+
 
 
 
