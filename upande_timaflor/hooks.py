@@ -126,6 +126,16 @@ fixtures = [
     }
 ]
 
+fixtures = [
+    {
+        "doctype": "Greenhouse",
+        "filters": {
+            "name": ["is", "set"]  
+        }
+    }
+]
+
+
 
 # Installation
 # ------------
