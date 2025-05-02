@@ -88,14 +88,16 @@ from frappe.utils import flt
 
 fixtures = [
     {
-        "dt": "Custom DocPerm"
+        "dt": "DocType",
+        "filters": [
+            ["name", "in", ["Biometric Log", "Biometric Signature"]]
+        ]
     },
     "Client Script",
-    "Print Format",
-    
-    {"dt": "Greenhouse"
-    }
+    "Print Format"
 ]
+
+
 
 
 # Installation

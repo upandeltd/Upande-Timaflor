@@ -1,21 +1,28 @@
 // Copyright (c) 2025, newton@upande.com and contributors
 // For license information, please see license.txt
 
-// frappe.ui.form.on("Fertilizer Order Sheet", {
-// 	refresh(frm) {
-
-// 	},
-// });
 frappe.ui.form.on('Fertilizer Order Sheet', {
     refresh: function(frm) {
         frm.add_custom_button(__('Calculate Order Quantities'), function() {
             calculate_order_quantities(frm);
         });
 
-        // Add button to copy data to a Material Request
-        frm.add_custom_button(__('Create Material Request'), function() {
-            create_material_request(frm);
-        }).addClass('btn-primary');
+        if (frm.doc.order_quantity && frm.doc.order_quantity.length > 0) {
+            // Add button to create Material Request
+            frm.add_custom_button(__('Create Material Request'), function() {
+                create_material_request(frm);
+            }, __('Create'));
+            
+            // Add button to create Request for Quotation
+            frm.add_custom_button(__('Create Request for Quotation'), function() {
+                create_request_for_quotation(frm);
+            }, __('Create')).addClass('btn-primary');
+            
+            // Add button to create Purchase Order directly
+            frm.add_custom_button(__('Create Purchase Order'), function() {
+                create_purchase_order(frm);
+            }, __('Create'));
+        }
     },
     
     average_consumption: function(frm) {
@@ -27,7 +34,7 @@ frappe.ui.form.on('Fertilizer Order Sheet', {
     },
     
     stock_wantedweeks: function(frm) {
-        // Recalculate order quantities when weeks change if we have data
+        // Recalculate order quantities when weeks change 
         if(frm.doc.weekly_average_consumption && frm.doc.weekly_average_consumption.length > 0 && 
            frm.doc.stock_levels && frm.doc.stock_levels.length > 0) {
             calculate_order_quantities(frm);
@@ -125,4 +132,106 @@ function create_material_request(frm) {
             }
         }
     });
+}
+
+function create_request_for_quotation(frm) {
+    if(!frm.doc.order_quantity || frm.doc.order_quantity.length === 0) {
+        frappe.msgprint(__('Please calculate order quantities first'));
+        return;
+    }
+    
+    // Make supplier optional for RFQ
+    let d = new frappe.ui.Dialog({
+        title: __('Create Request for Quotation'),
+        fields: [
+            {
+                label: __('Supplier (Optional)'),
+                fieldname: 'supplier',
+                fieldtype: 'Link',
+                options: 'Supplier',
+                reqd: 0,
+                get_query: function() {
+                    return {
+                        filters: {
+                            'supplier_group': 'Fertilizer'  // Optional filter
+                        }
+                    };
+                }
+            }
+        ],
+        primary_action_label: __('Create'),
+        primary_action: function() {
+            let values = d.get_values();
+            frappe.call({
+                method: 'upande_timaflor.upande_timaflor.doctype.fertilizer_order_sheet.fertilizer_order_sheet.create_request_for_quotation',
+                args: {
+                    'doc_name': frm.docname,
+                    'supplier': values.supplier || null
+                },
+                freeze: true,
+                freeze_message: __('Creating Request for Quotation...'),
+                callback: function(r) {
+                    if(r.message) {
+                        frappe.show_alert(__('Request for Quotation {0} created', [r.message]));
+                        frappe.set_route('Form', 'Request for Quotation', r.message);
+                    }
+                }
+            });
+            d.hide();
+        }
+    });
+    
+    d.show();
+}
+
+function create_purchase_order(frm) {
+    if(!frm.doc.order_quantity || frm.doc.order_quantity.length === 0) {
+        frappe.msgprint(__('Please calculate order quantities first'));
+        return;
+    }
+    
+    // Open a dialog to select supplier 
+    let d = new frappe.ui.Dialog({
+        title: __('Create Purchase Order'),
+        fields: [
+            {
+                label: __('Supplier'),
+                fieldname: 'supplier',
+                fieldtype: 'Link',
+                options: 'Supplier',
+                reqd: 1,  
+                get_query: function() {
+                    return {
+                        filters: {
+                            'supplier_group': 'Fertilizer'  
+                        }
+                    };
+                }
+            }
+        ],
+        primary_action_label: __('Create'),
+        primary_action: function() {
+            let values = d.get_values();
+            if(values.supplier) {
+                frappe.call({
+                    method: 'upande_timaflor.upande_timaflor.doctype.fertilizer_order_sheet.fertilizer_order_sheet.create_purchase_order',
+                    args: {
+                        'doc_name': frm.docname,
+                        'supplier': values.supplier
+                    },
+                    freeze: true,
+                    freeze_message: __('Creating Purchase Order...'),
+                    callback: function(r) {
+                        if(r.message) {
+                            frappe.show_alert(__('Purchase Order {0} created', [r.message]));
+                            frappe.set_route('Form', 'Purchase Order', r.message);
+                        }
+                    }
+                });
+                d.hide();
+            }
+        }
+    });
+    
+    d.show();
 }
