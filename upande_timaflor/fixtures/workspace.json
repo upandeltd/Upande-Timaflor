@@ -1,7 +1,7 @@
 [
  {
   "charts": [],
-  "content": "[{\"id\":\"pG1WfA8AEX\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h2\\\">PRODUCTION MANAGER</span>\",\"col\":12}}]",
+  "content": "[{\"id\":\"pG1WfA8AEX\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h2\\\">PRODUCTION MANAGER</span>\",\"col\":12}},{\"id\":\"z1YAzzxdXm\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Material Request\",\"col\":3}},{\"id\":\"cqPlQrq57k\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Bill Of Materials (BOM)\",\"col\":3}},{\"id\":\"m2uI6Bees5\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Work Order\",\"col\":3}}]",
   "custom_blocks": [],
   "docstatus": 0,
   "doctype": "Workspace",
@@ -12,7 +12,7 @@
   "is_hidden": 0,
   "label": "Production Manager Workspace",
   "links": [],
-  "modified": "2025-04-27 20:03:57.698166",
+  "modified": "2025-05-02 12:46:24.963134",
   "module": null,
   "name": "Production Manager Workspace",
   "number_cards": [],
@@ -41,7 +41,56 @@
    }
   ],
   "sequence_id": 6.0,
-  "shortcuts": [],
+  "shortcuts": [
+   {
+    "color": "Grey",
+    "doc_view": "List",
+    "format": null,
+    "icon": null,
+    "kanban_board": null,
+    "label": "Bill Of Materials (BOM)",
+    "link_to": "BOM",
+    "parent": "Production Manager Workspace",
+    "parentfield": "shortcuts",
+    "parenttype": "Workspace",
+    "restrict_to_domain": null,
+    "stats_filter": "[]",
+    "type": "DocType",
+    "url": null
+   },
+   {
+    "color": "Grey",
+    "doc_view": "List",
+    "format": null,
+    "icon": null,
+    "kanban_board": null,
+    "label": "Work Order",
+    "link_to": "Work Order",
+    "parent": "Production Manager Workspace",
+    "parentfield": "shortcuts",
+    "parenttype": "Workspace",
+    "restrict_to_domain": null,
+    "stats_filter": "[]",
+    "type": "DocType",
+    "url": null
+   },
+   {
+    "color": "Grey",
+    "doc_view": "List",
+    "format": null,
+    "icon": null,
+    "kanban_board": null,
+    "label": "Material Request",
+    "link_to": "Material Request",
+    "parent": "Production Manager Workspace",
+    "parentfield": "shortcuts",
+    "parenttype": "Workspace",
+    "restrict_to_domain": null,
+    "stats_filter": "[]",
+    "type": "DocType",
+    "url": null
+   }
+  ],
   "title": "Production Manager Workspace"
  },
  {
