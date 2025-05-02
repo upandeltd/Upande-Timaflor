@@ -996,11 +996,9 @@
    }
   ],
   "force_re_route_to_default_view": 0,
-
   "grid_page_length": 50,
-
- "has_web_view": 0,
-  "hide_toolbar": 0,
+  "has_web_view": 0,
+ "hide_toolbar": 0,
   "icon": null,
   "image_field": null,
   "in_create": 0,

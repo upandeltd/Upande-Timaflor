@@ -1,8 +1,7 @@
 [
  {
   "charts": [],
-
-  "content": "[{\"id\":\"pG1WfA8AEX\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h2\\\">PRODUCTION MANAGER</span>\",\"col\":12}},{\"id\":\"z1YAzzxdXm\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Material Request\",\"col\":3}},{\"id\":\"cqPlQrq57k\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Bill Of Materials (BOM)\",\"col\":3}},{\"id\":\"m2uI6Bees5\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Work Order\",\"col\":3}}]",
+ "content": "[{\"id\":\"pG1WfA8AEX\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h2\\\">PRODUCTION MANAGER</span>\",\"col\":12}},{\"id\":\"z1YAzzxdXm\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Material Request\",\"col\":3}},{\"id\":\"cqPlQrq57k\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Bill Of Materials (BOM)\",\"col\":3}},{\"id\":\"m2uI6Bees5\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Work Order\",\"col\":3}}]",
   "custom_blocks": [],
   "docstatus": 0,
   "doctype": "Workspace",
