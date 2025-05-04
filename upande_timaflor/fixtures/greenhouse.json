@@ -1,0 +1,862 @@
+[
+ {
+  "area": 1.0,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima1",
+  "ghse": "GHSE 01",
+  "modified": "2025-03-26 08:45:19.038465",
+  "name": "T1-GHSE 01",
+  "variety": "High & Magic"
+ },
+ {
+  "area": 1.4,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima1",
+  "ghse": "GHSE 02",
+  "modified": "2025-03-26 08:46:01.002339",
+  "name": "T1 -GHSE02",
+  "variety": "High & Magic"
+ },
+ {
+  "area": 1.5,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima1",
+  "ghse": "GHSE 03",
+  "modified": "2025-03-26 08:46:44.905120",
+  "name": "T1 -GHSE03",
+  "variety": "SnowFlake "
+ },
+ {
+  "area": 1.1,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima1",
+  "ghse": "GHSE 04",
+  "modified": "2025-03-26 08:47:31.252138",
+  "name": "T1 -GHSE04",
+  "variety": "Trial"
+ },
+ {
+  "area": 1.65,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima1",
+  "ghse": "GHSE 05",
+  "modified": "2025-03-26 08:48:16.191582",
+  "name": "T1 -GHSE05",
+  "variety": "S/Conder"
+ },
+ {
+  "area": 1.8,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima1",
+  "ghse": "GHSE 06",
+  "modified": "2025-03-27 10:26:57.637385",
+  "name": "T1 -GHSE06",
+  "variety": "PINK ATHENA"
+ },
+ {
+  "area": 1.8,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima1",
+  "ghse": "GHSE 07",
+  "modified": "2025-03-27 10:30:34.643349",
+  "name": "T1 -GHSE07",
+  "variety": "Athena"
+ },
+ {
+  "area": 1.8,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima1",
+  "ghse": "GHSE 08",
+  "modified": "2025-03-27 10:32:08.670126",
+  "name": "T1 -GHSE08",
+  "variety": "FiRE FOX"
+ },
+ {
+  "area": 1.3,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima1",
+  "ghse": "GHSE 09",
+  "modified": "2025-03-27 10:32:52.617960",
+  "name": "T1 -GHSE09",
+  "variety": "Athena Royale"
+ },
+ {
+  "area": 1.2,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima1",
+  "ghse": "GHSE 10",
+  "modified": "2025-03-27 10:33:24.110276",
+  "name": "T1 -GHSE10",
+  "variety": "Athena Royale"
+ },
+ {
+  "area": 1.6,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima2",
+  "ghse": "GHSE 11",
+  "modified": "2025-03-27 10:34:18.274175",
+  "name": "T2 -GHSE11",
+  "variety": "High & Magic"
+ },
+ {
+  "area": 2.0,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima2",
+  "ghse": "GHSE 12",
+  "modified": "2025-03-27 10:34:53.699190",
+  "name": "T2 -GHSE12",
+  "variety": "PINK ATHENA"
+ },
+ {
+  "area": 1.9,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima2",
+  "ghse": "GHSE 13",
+  "modified": "2025-03-27 10:35:55.147995",
+  "name": "T2 -GHSE13",
+  "variety": "Good Times"
+ },
+ {
+  "area": 2.2,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima2",
+  "ghse": "GHSE 14",
+  "modified": "2025-03-27 10:36:33.700307",
+  "name": "T2 -GHSE14",
+  "variety": "Revival SWEET"
+ },
+ {
+  "area": 2.0,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima2",
+  "ghse": "GHSE 15",
+  "modified": "2025-03-27 10:37:09.969412",
+  "name": "T2 -GHSE15",
+  "variety": "Good Times"
+ },
+ {
+  "area": 1.9,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima2",
+  "ghse": "GHSE 16",
+  "modified": "2025-03-27 10:37:44.421723",
+  "name": "T2 -GHSE16",
+  "variety": "Good Times"
+ },
+ {
+  "area": 1.5,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima2",
+  "ghse": "GHSE 17",
+  "modified": "2025-03-27 10:38:18.669107",
+  "name": "T2 -GHSE17",
+  "variety": "Espana"
+ },
+ {
+  "area": 1.5,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima2",
+  "ghse": "GHSE 18",
+  "modified": "2025-03-27 10:38:57.492566",
+  "name": "T2 -GHSE18",
+  "variety": "Silver Memory Lane"
+ },
+ {
+  "area": 1.5,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima2",
+  "ghse": "GHSE 19",
+  "modified": "2025-03-27 10:39:29.672656",
+  "name": "T2 -GHSE19",
+  "variety": "Memory Lane"
+ },
+ {
+  "area": 1.8,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima2",
+  "ghse": "GHSE 20",
+  "modified": "2025-03-27 10:40:05.175290",
+  "name": "T2 -GHSE20",
+  "variety": "Memory Lane"
+ },
+ {
+  "area": 1.6,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima2",
+  "ghse": "GHSE 21",
+  "modified": "2025-03-27 10:40:43.203966",
+  "name": "T2 -GHSE21",
+  "variety": "Mariyo"
+ },
+ {
+  "area": 1.6,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima2",
+  "ghse": "GHSE 22",
+  "modified": "2025-03-27 10:41:06.891851",
+  "name": "T2 -GHSE22",
+  "variety": "Mariyo"
+ },
+ {
+  "area": 1.3,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima3",
+  "ghse": "GHSE 01",
+  "modified": "2025-03-27 10:41:54.518896",
+  "name": "T3 -GHSE01",
+  "variety": "Memory Lane"
+ },
+ {
+  "area": 1.7,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima3",
+  "ghse": "GHSE 02",
+  "modified": "2025-03-27 10:44:48.755030",
+  "name": "T3 -GHSE02",
+  "variety": "Espana"
+ },
+ {
+  "area": 2.0,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima3",
+  "ghse": "GHSE 03",
+  "modified": "2025-03-27 10:45:28.596513",
+  "name": "T3 -GHSE03",
+  "variety": "Ever red"
+ },
+ {
+  "area": 2.0,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima3",
+  "ghse": "GHSE 04",
+  "modified": "2025-03-27 10:45:58.438197",
+  "name": "T3 -GHSE04",
+  "variety": "Revival"
+ },
+ {
+  "area": 2.0,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima3",
+  "ghse": "GHSE 05",
+  "modified": "2025-03-27 10:46:33.362421",
+  "name": "T3 -GHSE05",
+  "variety": "Madam Red"
+ },
+ {
+  "area": 2.0,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima3",
+  "ghse": "GHSE 06",
+  "modified": "2025-03-27 10:47:03.219643",
+  "name": "T3 -GHSE06",
+  "variety": "Bellevue"
+ },
+ {
+  "area": 2.0,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima3",
+  "ghse": "GHSE 07",
+  "modified": "2025-03-27 10:48:22.156192",
+  "name": "T3 -GHSE07",
+  "variety": "Revival Sweet"
+ },
+ {
+  "area": 1.5,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima3",
+  "ghse": "GHSE 08",
+  "modified": "2025-03-27 10:48:59.667714",
+  "name": "T3 -GHSE08",
+  "variety": "Athena"
+ },
+ {
+  "area": 2.0,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima3",
+  "ghse": "GHSE 09",
+  "modified": "2025-03-27 10:49:45.642937",
+  "name": "T3 -GHSE09",
+  "variety": "Albatros"
+ },
+ {
+  "area": 2.0,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima3",
+  "ghse": "GHSE 10",
+  "modified": "2025-03-27 10:50:18.252676",
+  "name": "T3 -GHSE10",
+  "variety": "Taccazi"
+ },
+ {
+  "area": 2.0,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima3",
+  "ghse": "GHSE 11",
+  "modified": "2025-03-27 10:51:03.209003",
+  "name": "T3 -GHSE11",
+  "variety": "Pink Athena"
+ },
+ {
+  "area": 1.0,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima3",
+  "ghse": "GHSE 13",
+  "modified": "2025-03-27 10:51:50.145282",
+  "name": "T3 -GHSE13",
+  "variety": "Taccazi"
+ },
+ {
+  "area": 1.9,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima3",
+  "ghse": "GHSE 14",
+  "modified": "2025-03-27 10:52:55.816843",
+  "name": "T3 -GHSE14",
+  "variety": "Memory Lane"
+ },
+ {
+  "area": 1.4,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima3",
+  "ghse": "GHSE 15A",
+  "modified": "2025-03-27 10:53:20.650434",
+  "name": "T3 -GHSE15A",
+  "variety": "Ever red"
+ },
+ {
+  "area": 1.3,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima3",
+  "ghse": "GHSE 15B",
+  "modified": "2025-03-27 10:53:55.816098",
+  "name": "T3 -GHSE15B",
+  "variety": "Ever red"
+ },
+ {
+  "area": 1.7,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima3",
+  "ghse": "GHSE 16A",
+  "modified": "2025-03-27 10:54:42.047759",
+  "name": "T3 -GHSE16A",
+  "variety": "Confidential"
+ },
+ {
+  "area": 1.6,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima3",
+  "ghse": "GHSE 16B",
+  "modified": "2025-03-27 10:55:11.408963",
+  "name": "T3 -GHSE16B",
+  "variety": "Confidential"
+ },
+ {
+  "area": 1.5,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima3",
+  "ghse": "GHSE 17A",
+  "modified": "2025-03-27 10:55:58.790668",
+  "name": "T3 -GHSE17A",
+  "variety": "Taccazi"
+ },
+ {
+  "area": 1.5,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima3",
+  "ghse": "GHSE 17B",
+  "modified": "2025-03-27 10:56:17.449622",
+  "name": "T3 -GHSE17B",
+  "variety": "Taccazi"
+ },
+ {
+  "area": 2.0,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima3",
+  "ghse": "GHSE 12",
+  "modified": "2025-03-27 10:57:00.547915",
+  "name": "T3 -GHSE12",
+  "variety": "Monique"
+ },
+ {
+  "area": 2.0,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima4",
+  "ghse": "GHSE 01",
+  "modified": "2025-03-27 10:58:09.205040",
+  "name": "T4 -GHSE01",
+  "variety": "Upper Class"
+ },
+ {
+  "area": 2.0,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima4",
+  "ghse": "GHSE 04",
+  "modified": "2025-03-27 10:58:36.524859",
+  "name": "T4 -GHSE04",
+  "variety": "Upper Class"
+ },
+ {
+  "area": 2.0,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima4",
+  "ghse": "GHSE 02",
+  "modified": "2025-03-27 10:59:05.274828",
+  "name": "T4 -GHSE02",
+  "variety": "Athena"
+ },
+ {
+  "area": 2.0,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima4",
+  "ghse": "GHSE 05",
+  "modified": "2025-03-27 10:59:42.654388",
+  "name": "T4 -GHSE05",
+  "variety": "Athena Royale"
+ },
+ {
+  "area": 2.0,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima4",
+  "ghse": "GHSE 06",
+  "modified": "2025-03-27 11:00:12.756711",
+  "name": "T4 -GHSE06",
+  "variety": "Albatros"
+ },
+ {
+  "area": 2.0,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima4",
+  "ghse": "GHSE 07",
+  "modified": "2025-03-27 11:00:52.111915",
+  "name": "T4 -GHSE07",
+  "variety": "Upper Class"
+ },
+ {
+  "area": 2.0,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima4",
+  "ghse": "GHSE 08",
+  "modified": "2025-03-27 11:01:46.763434",
+  "name": "T4 -GHSE08",
+  "variety": "Revival"
+ },
+ {
+  "area": 2.0,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima4",
+  "ghse": "GHSE 09",
+  "modified": "2025-03-27 11:02:12.121833",
+  "name": "T4 -GHSE09",
+  "variety": "Confidential"
+ },
+ {
+  "area": 2.0,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima4",
+  "ghse": "GHSE 10",
+  "modified": "2025-03-27 11:02:43.619886",
+  "name": "T4 -GHSE10",
+  "variety": "Martim"
+ },
+ {
+  "area": 2.0,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima4",
+  "ghse": "GHSE 11",
+  "modified": "2025-03-27 11:03:22.087164",
+  "name": "T4 -GHSE11",
+  "variety": "Taccazi"
+ },
+ {
+  "area": 2.0,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima4",
+  "ghse": "GHSE 12",
+  "modified": "2025-03-27 11:03:45.925990",
+  "name": "T4 -GHSE12",
+  "variety": "Albatros"
+ },
+ {
+  "area": 1.9,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima4",
+  "ghse": "GHSE 13",
+  "modified": "2025-03-27 11:04:21.921350",
+  "name": "T4 -GHSE13",
+  "variety": "Athena"
+ },
+ {
+  "area": 2.0,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima4",
+  "ghse": "GHSE 03",
+  "modified": "2025-03-27 11:04:52.436189",
+  "name": "T4 -GHSE03",
+  "variety": "Athena"
+ },
+ {
+  "area": 2.0,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima5",
+  "ghse": "GHSE 01",
+  "modified": "2025-03-27 11:05:52.888043",
+  "name": "T5 -GHSE01",
+  "variety": "ROYALE"
+ },
+ {
+  "area": 2.0,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima5",
+  "ghse": "GHSE 02",
+  "modified": "2025-03-27 11:06:19.538570",
+  "name": "T5 -GHSE02",
+  "variety": "Albatros"
+ },
+ {
+  "area": 2.0,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima5",
+  "ghse": "GHSE 03",
+  "modified": "2025-03-27 11:06:43.379645",
+  "name": "T5 -GHSE03",
+  "variety": "Memory Lane"
+ },
+ {
+  "area": 2.0,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima5",
+  "ghse": "GHSE 04",
+  "modified": "2025-03-27 11:07:06.621211",
+  "name": "T5 -GHSE04",
+  "variety": "PINK ATHENA"
+ },
+ {
+  "area": 2.0,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima5",
+  "ghse": "GHSE 05",
+  "modified": "2025-03-27 11:07:31.082460",
+  "name": "T5 -GHSE05",
+  "variety": "Athena"
+ },
+ {
+  "area": 2.0,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima5",
+  "ghse": "GHSE 06",
+  "modified": "2025-03-27 11:08:08.527050",
+  "name": "T5 -GHSE06",
+  "variety": "Deep purple"
+ },
+ {
+  "area": 2.0,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima5",
+  "ghse": "GHSE 08",
+  "modified": "2025-03-27 11:08:24.553138",
+  "name": "T5 -GHSE08",
+  "variety": "Deep purple"
+ },
+ {
+  "area": 2.0,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima5",
+  "ghse": "GHSE 07",
+  "modified": "2025-03-27 11:08:57.788020",
+  "name": "T5 -GHSE07",
+  "variety": "Paloma"
+ },
+ {
+  "area": 2.0,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima5",
+  "ghse": "GHSE 09",
+  "modified": "2025-03-27 11:09:21.834800",
+  "name": "T5 -GHSE09",
+  "variety": "Upper Class"
+ },
+ {
+  "area": 2.0,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima5",
+  "ghse": "GHSE 10",
+  "modified": "2025-03-27 11:09:54.641558",
+  "name": "T5 -GHSE10",
+  "variety": "Good Times"
+ },
+ {
+  "area": 1.8,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima6",
+  "ghse": "GHSE 01",
+  "modified": "2025-04-04 06:22:16.446130",
+  "name": "T6 -GHSE01",
+  "variety": "Ever Red"
+ },
+ {
+  "area": 1.8,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima6",
+  "ghse": "GHSE 02",
+  "modified": "2025-04-04 06:22:36.323046",
+  "name": "T6 -GHSE02",
+  "variety": "Good Times"
+ },
+ {
+  "area": 1.8,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima6",
+  "ghse": "GHSE 03",
+  "modified": "2025-04-04 06:23:54.326811",
+  "name": "T6 -GHSE03",
+  "variety": "Revival"
+ },
+ {
+  "area": 1.8,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima6",
+  "ghse": "GHSE 04",
+  "modified": "2025-04-04 06:24:19.751172",
+  "name": "T6 -GHSE04",
+  "variety": "Mariyo"
+ },
+ {
+  "area": 1.8,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima6",
+  "ghse": "GHSE 05",
+  "modified": "2025-04-04 06:25:16.156535",
+  "name": "T6 -GHSE05",
+  "variety": "Confidential"
+ },
+ {
+  "area": 1.8,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima6",
+  "ghse": "GHSE 06",
+  "modified": "2025-04-04 06:25:29.811623",
+  "name": "T6 -GHSE06",
+  "variety": "Espana"
+ },
+ {
+  "area": 2.0,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima6",
+  "ghse": "GHSE 07",
+  "modified": "2025-04-04 06:26:08.072586",
+  "name": "T6 -GHSE07",
+  "variety": "Upper Class"
+ },
+ {
+  "area": 2.0,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima6",
+  "ghse": "GHSE 08",
+  "modified": "2025-04-04 06:26:39.033145",
+  "name": "T6 -GHSE08",
+  "variety": "Ever Red"
+ },
+ {
+  "area": 2.0,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima6",
+  "ghse": "GHSE 09",
+  "modified": "2025-04-04 06:27:06.905237",
+  "name": "T6 -GHSE09",
+  "variety": "Helene"
+ },
+ {
+  "area": 2.0,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima6",
+  "ghse": "GHSE 10",
+  "modified": "2025-04-04 06:27:35.922239",
+  "name": "T6 -GHSE10",
+  "variety": "Wild fox"
+ },
+ {
+  "area": 2.0,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima6",
+  "ghse": "GHSE 11",
+  "modified": "2025-04-04 06:28:02.903186",
+  "name": "T6 -GHSE11",
+  "variety": "Unicorn"
+ },
+ {
+  "area": 2.0,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima6",
+  "ghse": "GHSE 12",
+  "modified": "2025-04-04 06:28:26.446730",
+  "name": "T6 -GHSE12",
+  "variety": "Revival Sweet"
+ },
+ {
+  "area": 2.0,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima7",
+  "ghse": "GHSE 11",
+  "modified": "2025-04-04 06:29:11.695200",
+  "name": "T7 -GHSE11",
+  "variety": "METEOR"
+ },
+ {
+  "area": 1.5,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima7",
+  "ghse": "GHSE 12A",
+  "modified": "2025-04-04 06:29:49.066165",
+  "name": "T7 -GHSE12A",
+  "variety": "Madam Red"
+ },
+ {
+  "area": 1.5,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima7",
+  "ghse": "GHSE 12B",
+  "modified": "2025-04-04 06:30:20.262383",
+  "name": "T7 -GHSE12B",
+  "variety": "Madam Red"
+ },
+ {
+  "area": 1.5,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima7",
+  "ghse": "GHSE 13A",
+  "modified": "2025-04-04 06:30:53.272457",
+  "name": "T7 -GHSE13A",
+  "variety": "Athena"
+ },
+ {
+  "area": 1.5,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima7",
+  "ghse": "GHSE 13B",
+  "modified": "2025-04-04 06:31:11.625958",
+  "name": "T7 -GHSE13B",
+  "variety": "Athena"
+ },
+ {
+  "area": 1.5,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima7",
+  "ghse": "GHSE 14A",
+  "modified": "2025-04-04 06:31:45.130075",
+  "name": "T7 -GHSE14A",
+  "variety": "JESSICA"
+ },
+ {
+  "area": 1.5,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima7",
+  "ghse": "GHSE 14B",
+  "modified": "2025-04-04 06:32:02.812624",
+  "name": "T7 -GHSE14B",
+  "variety": "JESSICA"
+ },
+ {
+  "area": 1.5,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima7",
+  "ghse": "GHSE 15A",
+  "modified": "2025-04-04 06:32:33.566170",
+  "name": "T7 -GHSE15A",
+  "variety": "Frutetto"
+ },
+ {
+  "area": 1.5,
+  "docstatus": 0,
+  "doctype": "Greenhouse",
+  "farm": "Tima7",
+  "ghse": "GHSE 15B",
+  "modified": "2025-04-04 06:32:51.769642",
+  "name": "T7 -GHSE15B",
+  "variety": "Frutetto"
+ }
+]

@@ -6,7 +6,6 @@ app_email = "newton@upande.com"
 app_license = "mit"
 
 
-# Required imports (add at the top)
 import frappe
 from frappe import _
 from frappe.utils import flt
@@ -95,9 +94,18 @@ fixtures = [
         ]
     },
     "Client Script",
-    "Server Script",
-    "Workspace"
+    "Print Format"
 ]
+
+fixtures = [
+    {
+        "doctype": "Greenhouse",
+        "filters": {
+            "name": ["is", "set"]  
+        }
+    }
+]
+
 
 
 
