@@ -111,11 +111,15 @@ fixtures = [
     {
         "dt": "DocType",
         "filters": [
+<<<<<<< HEAD
             ["name", "in", [
                 "Biometric Log",
                 "Biometric Signature",
                 "Assigned To Material"
             ]]
+=======
+            ["name", "in", ["Biometric Log", "Biometric Signature", "Greenhouse", "Ordering Sheet", "Order Detail", "Order Quantity", "Daily Maximum Consumption", "Daily Minimum Consumption", "Fertilizer Order Sheet", "Fertilizer Stock Levels", "Chemical Stock Levels", "Chemical Order Sheet", "Chemical Order Quantity", "Area To Spray", "Chemical Sprays", "Fertilizer Average Consumption", "Stock Levels", "Quantity To Order", "Chemical Target"]]
+>>>>>>> af5d935 (Updated Fixtures)
         ]
     },
     {
