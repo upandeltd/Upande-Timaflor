@@ -1,0 +1,78 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:Order-{#####}",
+ "creation": "2025-04-30 06:31:50.746876",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_7jlu",
+  "farm_area_to_spray",
+  "spray_details",
+  "order_detail",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_7jlu",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "farm_area_to_spray",
+   "fieldtype": "Table",
+   "label": "Farm Area To Spray",
+   "options": "Area To Spray"
+  },
+  {
+   "fieldname": "spray_details",
+   "fieldtype": "Table",
+   "label": "Spray Details",
+   "options": "Chemical Sprays"
+  },
+  {
+   "fieldname": "order_detail",
+   "fieldtype": "Table",
+   "label": "Order Detail",
+   "options": "Chemical Order Quantity"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Chemical Order Sheet",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2025-04-30 09:16:15.716757",
+ "modified_by": "Administrator",
+ "module": "Upande Timaflor",
+ "name": "Chemical Order Sheet",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

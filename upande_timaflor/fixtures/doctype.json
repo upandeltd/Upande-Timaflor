@@ -370,8 +370,8 @@
   "make_attachments_public": 0,
   "max_attachments": 0,
   "menu_index": null,
-  "migration_hash": "29f107724138d1663360f6edbb6670dc",
-  "modified": "2025-05-01 21:39:41.431523",
+  "migration_hash": null,
+  "modified": "2025-04-25 08:58:53.347679",
   "module": "Upande Timaflor",
   "name": "Biometric Log",
   "naming_rule": "Autoincrement",
@@ -706,6 +706,7 @@
   "track_views": 0,
   "translated_doctype": 0,
   "website_search_field": null
+
  },
  {
   "_assign": null,
