@@ -1,112 +1,25 @@
 [
- {
-  "docstatus": 0,
-  "doctype": "Client Script",
-  "dt": "Supplier Quotation",
-  "enabled": 1,
-  "modified": "2025-04-09 00:41:15.335214",
-  "module": "Upande Timaflor",
-  "name": "Update the RFQ from child table to SQ",
-  "script": "frappe.ui.form.on('Supplier Quotation', {\n    refresh: function(frm) {\n       \n        if (frm.doc.items && frm.doc.items.length > 0) {\n            let request_for_quotation = frm.doc.items[0].request_for_quotation; \n            frm.set_value('custom_request_for_quotation', request_for_quotation); \n        }\n    },\n\n    validate: function(frm) {\n        if (frm.doc.items && frm.doc.items.length > 0) {\n            let request_for_quotation = frm.doc.items[0].request_for_quotation; \n            frm.set_value('custom_request_for_quotation', request_for_quotation); \n        }\n    }\n});\n",
-  "view": "Form"
- },
- {
-  "docstatus": 0,
-  "doctype": "Client Script",
-  "dt": "Stock Entry",
-  "enabled": 1,
-  "modified": "2025-03-26 03:54:33.025099",
-  "module": null,
-  "name": "Vehicle/Machinery",
-  "script": "frappe.ui.form.on('Stock Entry', {\n    custom_issue_to_type(frm) { \n        // Hide both fields by default\n        frm.toggle_display('custom_type_of_vehicle', false);\n        frm.toggle_display('custom_type_of_machinery', false);\n\n        // Show fields based on selection\n        if (frm.doc.custom_issue_to_type === 'Vehicle') {\n            frm.toggle_display('custom_type_of_vehicle', true);\n        } \n        else if (frm.doc.custom_issue_to_type === 'Machinery') {\n            frm.toggle_display('custom_type_of_machinery', true);\n        }\n\n        // Refresh fields\n        frm.refresh_field('custom_type_of_vehicle');\n        frm.refresh_field('custom_type_of_machinery');\n    },\n    refresh(frm) {\n        // Hide fields on form load\n        frm.toggle_display(['custom_type_of_vehicle', 'custom_type_of_machinery'], false);\n    }\n});",
-  "view": "Form"
- },
- {
-  "docstatus": 0,
-  "doctype": "Client Script",
-  "dt": "Farm Item Analysis",
-  "enabled": 1,
-  "modified": "2025-03-26 06:33:39.512726",
-  "module": null,
-  "name": "Farm Items",
-  "script": "frappe.ui.form.on('Farm Item Analysis', {\n    item: function(frm, cdt, cdn) {\n        let row = locals[cdt][cdn];\n        if (row.item) {\n            frappe.call({\n                method: 'farm_item_analysis.get_item_details',\n                args: {\n                    'item': row.item\n                },\n                callback: function(r) {\n                    if (r.message) {\n                        frappe.model.set_value(cdt, cdn, 'total_quantity', r.message.total_quantity);\n                        frappe.model.set_value(cdt, cdn, 'average_per_farm', r.message.average_per_farm);\n                    }\n                }\n            });\n        }\n    }\n});",
-  "view": "Form"
- },
- {
-  "docstatus": 0,
-  "doctype": "Client Script",
-  "dt": "Stock Reconciliation",
-  "enabled": 1,
-  "modified": "2025-04-03 10:42:17.659211",
-  "module": null,
-  "name": "Stock Reconcilliation",
-  "script": "// Custom script for Stock Reconciliation form in Frappe/ERPNext\n// Save this as a Client Script for the \"Stock Reconciliation\" DocType\n\nfrappe.ui.form.on('Stock Reconciliation', {\n    refresh: function(frm) {\n        // Apply color coding to quantity difference column\n        applyColorCoding(frm);\n        \n        // Set up the calculation for differences\n        setupDifferenceCalculation(frm);\n    },\n    \n    after_save: function(frm) {\n        // Reapply color coding after save\n        applyColorCoding(frm);\n    }\n});\n\nfunction setupDifferenceCalculation(frm) {\n    // Set up event handlers for physical_stock_count field\n    frappe.ui.form.on('Stock Reconciliation Item', 'custom_physical_stock_count', function(frm, cdt, cdn) {\n        let row = locals[cdt][cdn];\n        if (row.custom_physical_stock_count !== undefined) {\n            // Calculate difference: physical count - system quantity\n            row.qty_difference = row.custom_physical_stock_count - row.qty;\n            refresh_field('items');\n            applyColorCoding(frm);\n        }\n    });\n    \n    // Initialize physical_stock_count based on qty and existing difference if available\n    frm.doc.items.forEach(function(item) {\n        if (item.qty !== undefined) {\n            // If qty_difference exists, use it to calculate physical_stock_count\n            if (item.qty_difference !== undefined && item.custom_physical_stock_count === undefined) {\n                item.custom_physical_stock_count = item.qty + item.qty_difference;\n            } \n            // If physical_stock_count exists but qty_difference doesn't, calculate difference\n            else if (item.custom_physical_stock_count !== undefined && item.qty_difference === undefined) {\n                item.qty_difference = item.custom_physical_stock_count - item.qty;\n            }\n            // If neither exists, initialize physical_stock_count with qty\n            else if (item.custom_physical_stock_count === undefined) {\n                item.custom_physical_stock_count = item.qty;\n                item.qty_difference = 0;\n            }\n        }\n    });\n    refresh_field('items');\n}\n\nfunction applyColorCoding(frm) {\n    // Apply color coding to quantity difference cells\n    setTimeout(function() {\n        frm.fields_dict.items.grid.grid_rows.forEach(function(row) {\n            const difference = row.doc.qty_difference;\n            \n            if (difference !== undefined && difference !== null) {\n                // Select the cell with qty_difference\n                const $cell = row.columns.qty_difference.$wrapper;\n                \n                // Remove existing color classes\n                $cell.removeClass('text-success text-danger');\n                \n                // Add appropriate color class\n                if (difference > 0) {\n                    $cell.addClass('text-success');\n                } else if (difference < 0) {\n                    $cell.addClass('text-danger');\n                }\n            }\n        });\n    }, 100);\n}\n\n// Add custom CSS for coloring\nfrappe.dom.set_style(`\n    .text-success { color: #28a745 !important; font-weight: bold; }\n    .text-danger { color: #dc3545 !important; font-weight: bold; }\n`);",
-  "view": "Form"
- },
- {
-  "docstatus": 0,
-  "doctype": "Client Script",
-  "dt": "Item",
-  "enabled": 1,
-  "modified": "2025-03-21 06:50:53.975796",
-  "module": null,
-  "name": "Chemical",
-  "script": "frappe.ui.form.on('Item', {\n  item_group: function(frm) {\n    if (frm.doc.item_group === 'Chemical') {\n      // Show the Application Rate Type dropdown and parent section\n      frm.set_df_property('custom_application_rate_type', 'hidden', 0);\n      frm.set_df_property('custom_application_rate_type', 'reqd', 1);\n\n     \n\n      // Initialize child fields as hidden\n      frm.set_df_property('custom_application_rate_per_ha', 'hidden', 1);\n      frm.set_df_property('custom_application_volume_per_10002000l', 'hidden', 1);\n\n    } else {\n      // Hide all fields for non-Chemical items\n      ['custom_application_rate_type', 'custom_application_rate_per_ha', \n       'custom_application_volume_per_10002000l'].forEach(field => {\n        frm.set_df_property(field, 'hidden', 1);\n        frm.set_df_property(field, 'reqd', 0);\n      });\n    }\n    frm.refresh_fields();\n  },\n\n  // Handle visibility of rate/volume fields\n  custom_application_rate_type: function(frm) {\n    if (frm.doc.custom_application_rate_type === 'Per Hectare') {\n      frm.set_df_property('custom_application_rate_per_ha', 'hidden', 0);\n      frm.set_df_property('custom_application_volume_per_10002000l', 'hidden', 1);\n      frm.set_df_property('custom_application_rate_per_ha', 'reqd', 1);\n    } else if (frm.doc.custom_application_rate_type === 'Per Volume') {\n      frm.set_df_property('custom_application_volume_per_10002000l', 'hidden', 0);\n      frm.set_df_property('custom_application_rate_per_ha', 'hidden', 1);\n      frm.set_df_property('custom_application_volume_per_10002000l', 'reqd', 1);\n    }\n    frm.refresh_fields();\n  },\n\n  refresh: function(frm) {\n    frm.trigger('item_group');\n    frm.trigger('custom_application_rate_type'); // Update fields on form load\n  }\n});",
-  "view": "Form"
- },
- {
-  "docstatus": 0,
-  "doctype": "Client Script",
-  "dt": "Item",
-  "enabled": 1,
-  "modified": "2025-03-21 06:55:24.473674",
-  "module": null,
-  "name": "Fertilizer",
-  "script": "frappe.ui.form.on('Item', {\n    item_group: function(frm) {\n        if (frm.doc.item_group === 'Fertilizer') {\n            // Hide or grey out Active Ingredients for Fertilizer\n            frm.set_df_property('custom_active_ingredients', 'hidden', 0); // Hide\n            // OR for read-only (greyed out):\n            frm.set_df_property('custom_active_ingredients', 'read_only', 1);\n\n            // Other Fertilizer-specific settings\n            frm.set_df_property('custom_application_rate', 'hidden', 0);\n            frm.set_df_property('custom_application_rate', 'reqd', 0);\n        } else {\n            // Show Active Ingredients for non-Fertilizer groups\n            frm.set_df_property('custom_active_ingredients', 'hidden', 0);\n            // Hide Fertilizer-specific fields\n            frm.set_df_property('custom_application_rate', 'hidden', 1);\n        }\n    },\n    refresh: function(frm) {\n        frm.trigger('item_group');\n    }\n});",
-  "view": "Form"
- },
- {
-  "docstatus": 0,
-  "doctype": "Client Script",
-  "dt": "BOM",
-  "enabled": 1,
-  "modified": "2025-03-21 09:50:14.658352",
-  "module": null,
-  "name": "BOM",
-  "script": "frappe.ui.form.on('BOM', {\n    refresh: function(frm) {\n        frm.fields_dict.items.grid.grid_rows.forEach(row => {\n            setup_item_code_event(row);\n        });\n    }\n});\n\n// item_code handler\nfrappe.ui.form.on('BOM Item', {\n    item_code: function(frm, cdt, cdn) {\n        const row = frappe.get_doc(cdt, cdn);\n        if (!row.item_code) return;\n\n        frappe.db.get_value('Item', row.item_code, [\n            'item_group',\n            'custom_application_rate_type',\n            'custom_application_rate_per_ha',\n            'custom_application_volume_per_10002000l'\n        ], (r) => {\n            if (!r) return;\n\n            //  Quantity logic\n            if (r.item_group === 'Chemical') {\n                let rate = 0;\n                if (r.custom_application_rate_type === 'Per Hectare') {\n                    rate = r.custom_application_rate_per_ha || 0;\n                } else if (r.custom_application_rate_type === 'Per Volume') {\n                    rate = r.custom_application_volume_per_10002000l || 0;\n                }\n                frappe.model.set_value(cdt, cdn, 'qty', rate);\n            }\n\n            //Field editability logic\n            const isChemical = r.item_group === 'Chemical';\n            const isFertilizer = r.item_group === 'Fertilizer';\n            \n            const grid_row = frm.fields_dict.items.grid.grid_rows_by_docname[cdn];\n            if (grid_row) {\n                grid_row.set_df_property('nozzle', 'read_only', !isChemical);\n                grid_row.set_df_property('variety', 'read_only', !isChemical);\n                grid_row.set_df_property('tank', 'read_only', !isFertilizer);\n            }\n        });\n    }\n});\n\nfunction setup_item_code_event(row) {\n    row.$wrapper.find('[data-fieldname=\"item_code\"]').on('change', () => {\n        row.doc.item_code && row.doc.item_code();\n    });\n}",
-  "view": "Form"
- },
- {
-  "docstatus": 0,
-  "doctype": "Client Script",
-  "dt": "Fertilizer Ordering Sheet",
-  "enabled": 1,
-  "modified": "2025-03-21 07:37:47.528740",
-  "module": null,
-  "name": "Fertilizer Order Sheet",
-  "script": "frappe.ui.form.on('Fertilizer Ordering Sheet', {\n  days_averaged: function(frm) {\n    // Fetch historical consumption data and calculate averages\n    if (frm.doc.days_averaged && frm.doc.order_items) {\n      frm.doc.order_items.forEach(row => {\n        frappe.call({\n          method: 'your_app.your_custom_method.get_average_consumption',\n          args: {\n            item: row.fertilizer,\n            days: frm.doc.days_averaged\n          },\n          callback: (r) => {\n            frappe.model.set_value(row.doctype, row.name, 't1_avg', r.message);\n          }\n        });\n      });\n    }\n  },\n  order_days: function(frm) {\n    // Auto-calculate order quantity (avg * order_days)\n    if (frm.doc.order_days && frm.doc.order_items) {\n      frm.doc.order_items.forEach(row => {\n        const order_qty = row.t1_avg * frm.doc.order_days;\n        frappe.model.set_value(row.doctype, row.name, 't1_order', order_qty);\n      });\n    }\n  }\n});\n\n// Make \"Days Averaged\" read-only after submit\nfrappe.ui.form.on('Order Sheet', {\n  refresh: function(frm) {\n    if (frm.doc.docstatus === 1) {\n      frm.set_df_property('days_averaged', 'read_only', 1);\n    }\n  }\n});",
-  "view": "Form"
- },
- {
-  "docstatus": 0,
-  "doctype": "Client Script",
-  "dt": "Stock Entry",
-  "enabled": 1,
-  "modified": "2025-03-21 14:05:26.289651",
-  "module": null,
-  "name": "Fuel Issuing",
-  "script": "frappe.ui.form.on('Stock Entry', {\n    issue_to_type: function(frm) {\n        const is_material_issue = frm.doc.stock_entry_type === \"Material Issue\";\n        // Hide all fields initially\n        frm.toggle_display(['custom_vehicle_registration_number', 'custom_machinery', 'resident'], false);\n        \n        // Show fields based on selected type\n        if (type === 'Vehicle') {\n            frm.toggle_display('custom_vehicle_registration_number', true);\n            frm.set_df_property('custom_vehicle_registration_number', 'reqd', 1);\n        } \n        else if (type === 'Machinery') {\n            frm.toggle_display('custom_machinery', true);\n            frm.set_df_property('custom_machinery', 'reqd', 1);\n        } \n        else if (type === 'Resident') {\n            frm.toggle_display('resident', true);\n            frm.set_df_property('resident', 'reqd', 1);\n        }\n\n        // Force refresh the form layout\n        frm.refresh_fields();\n    }\n});",
-  "view": "Form"
- },
- {
-  "docstatus": 0,
-  "doctype": "Client Script",
-  "dt": "Ordering Sheet",
-  "enabled": 1,
-  "modified": "2025-03-25 15:00:54.029643",
-  "module": null,
-  "name": "Ordering Sheet",
-  "script": "frappe.ui.form.on('Ordering Sheet', {\n    days_averaged: function(frm) {\n        if (frm.doc.days_averaged && frm.doc.order_items) {\n            frm.doc.order_items.forEach(row => {\n                frappe.call({\n                    method: 'upande_timaflor.custom.order_sheet.get_average_consumption',\n                    args: {\n                        item: row.fertilizer,\n                        days_averaged: frm.doc.days_averaged\n                    },\n                    callback: (r) => {\n                        if (!r.exc) {\n                            frappe.model.set_value(row.doctype, row.name, 't1_avg', r.message);\n                            if (frm.doc.order_days) {\n                                const order_qty = r.message * frm.doc.order_days;\n                                frappe.model.set_value(row.doctype, row.name, 't1_order', order_qty);\n                            }\n                        }\n                    },\n                    freeze: true,\n                    freeze_message: __(\"Fetching consumption data...\")\n                });\n            });\n        }\n    },\n    order_days: function(frm) {\n        if (frm.doc.order_days && frm.doc.order_items) {\n            frm.doc.order_items.forEach(row => {\n                if (row.t1_avg) {\n                    const order_qty = row.t1_avg * frm.doc.order_days;\n                    frappe.model.set_value(row.doctype, row.name, 't1_order', order_qty);\n                }\n            });\n        }\n    },\n    refresh: function(frm) {\n        if (frm.doc.docstatus === 1) {\n            frm.set_df_property('days_averaged', 'read_only', 1);\n        }\n        // Initialize calculations only for new docs\n        if (!frm.doc.__islocal) {\n            frm.trigger('days_averaged');\n            frm.trigger('order_days');\n        }\n    }\n});",
-  "view": "Form"
- }
+
+  {
+    "docstatus": 0,
+    "doctype": "Client Script",
+    "dt": "Material Request",
+    "enabled": 1,
+    "modified": "2025-05-01 21:21:41.699121",
+    "module": "Upande Timaflor",
+    "name": "Biometric Signature",
+    "script": "frappe.ui.form.on('Material Request', {\n    refresh(frm) {\n        handle_biometric_logic(frm);\n\n        // Passive dashboard comment instead of popup\n        if (frm.doc.docstatus === 1 && frm.doc.material_request_type === \"Material Issue\") {\n            if (!has_biometric_signature(frm)) {\n                frm.dashboard.add_comment(__('Consider adding a biometric signature for verification.'), 'yellow');\n            }\n        }\n    },\n\n    material_request_type(frm) {\n        handle_biometric_logic(frm);\n    },\n\n    make_stock_entry: function(frm) {\n        let employee = null;\n        if (frm.doc.custom_biometric_data && frm.doc.custom_biometric_data.length > 0) {\n            employee = frm.doc.custom_biometric_data[0].employee;\n        }\n\n        frappe.model.open_mapped_doc({\n            method: \"erpnext.stock.doctype.material_request.material_request.make_stock_entry\",\n            frm: frm,\n            callback: function(r) {\n                if (r.doc && employee) {\n                    frappe.model.set_value(r.doc.doctype, r.doc.name, \"employee\", employee);\n                }\n            }\n        });\n    }\n});\n\nfunction handle_biometric_logic(frm) {\n    frm.set_df_property(\"custom_biometric_data\", \"hidden\", 1);\n    frm.set_df_property(\"custom_biometric_data\", \"reqd\", 0);\n    frm.remove_custom_button('Add Biometric Signature');\n\n    if (frm.doc.docstatus === 1 && frm.doc.material_request_type === \"Material Issue\") {\n        frm.set_df_property(\"custom_biometric_data\", \"hidden\", 0);\n        if (!has_biometric_signature(frm)) {\n            add_biometric_button(frm);\n        }\n    }\n}\n\nfunction has_biometric_signature(frm) {\n    return (frm.doc.custom_biometric_data || []).length > 0;\n}\n\nfunction add_biometric_button(frm) {\n    frm.add_custom_button('Add Biometric Signature', async () => {\n        if (has_biometric_signature(frm)) {\n            frappe.msgprint('Biometric data already added.');\n            frm.remove_custom_button('Add Biometric Signature');\n            return;\n        }\n\n        try {\n            const result = await frappe.call({\n                method: 'get_latest_biometric_log'\n            });\n\n            if (result && result.message) {\n                const log = result.message;\n                const row = frappe.model.add_child(frm.doc, 'Biometric Signature', 'custom_biometric_data');\n                row.employee = log.employee;\n                row.employee_name = log.employee_name;\n                row.biometric_id = log.biometric_id;\n                row.timestamp = log.timestamp;\n\n                frm.refresh_field('custom_biometric_data');\n                frappe.msgprint('Biometric data added.');\n                frm.remove_custom_button('Add Biometric Signature');\n            }\n            // Silently ignore if no biometric log found\n        } catch (e) {\n            frappe.msgprint(__('Error fetching biometric log: ') + e.message);\n        }\n    });\n}\n",
+    "view": "Form"
+  },
+  {
+    "docstatus": 0,
+    "doctype": "Client Script",
+    "dt": "Material Request",
+    "enabled": 1,
+    "modified": "2025-05-01 21:08:15.591979",
+    "module": "Upande Timaflor",
+    "name": "Material Assigned To Employee",
+    "script": "frappe.ui.form.on('Material Request', {\n    refresh(frm) {\n        handle_employee_assigned_logic(frm);\n    },\n\n    material_request_type(frm) {\n        handle_employee_assigned_logic(frm);\n    }\n});\n\nfunction handle_employee_assigned_logic(frm) {\n    frm.set_df_property(\"custom_employee_assigned_to\", \"hidden\", 1);\n    frm.set_df_property(\"custom_employee_assigned_to\", \"reqd\", 0);\n\n    if (frm.doc.material_request_type === \"Material Issue\") {\n        frm.set_df_property(\"custom_employee_assigned_to\", \"hidden\", 0);\n        frm.set_df_property(\"custom_employee_assigned_to\", \"reqd\", 1);\n    }\n}\n",
+    "view": "Form"
+  }
 ]

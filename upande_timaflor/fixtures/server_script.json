@@ -9,13 +9,13 @@
   "doctype_event": "Before Insert",
   "enable_rate_limit": 0,
   "event_frequency": "All",
-  "modified": "2025-04-11 11:07:00.156852",
-  "module": "Biometric Auth",
-  "name": "get_latest_biometric_log",
+  "modified": "2025-05-02 08:43:40.396188",
+ "module": "Upande Timaflor",
+ "name": "get_latest_biometric_log",
   "rate_limit_count": 5,
   "rate_limit_seconds": 86400,
   "reference_doctype": null,
-  "script": "time_threshold = frappe.utils.add_to_date(frappe.utils.now_datetime(), minutes=-0.5)\n\nlatest_log = frappe.get_all(\n    \"Biometric Log\",\n    filters={\n        \"timestamp\": [\">\", time_threshold]\n    },\n    fields=[\"employee\", \"biometric_id\", \"timestamp\",\"employee_name\"],\n    order_by=\"timestamp desc\",\n    limit=1\n)\n\nif latest_log:\n    frappe.response['message'] = latest_log[0]\nelse:\n    frappe.throw(\"No biometric log found in the last 30 seconds.\")\n",
+  "script": "time_threshold = frappe.utils.add_to_date(frappe.utils.now_datetime(), minutes=-5000000)\r\n\r\nlatest_log = frappe.get_all(\r\n    \"Biometric Log\",\r\n    filters={\r\n        \"timestamp\": [\">\", time_threshold]\r\n    },\r\n    fields=[\"employee\", \"biometric_id\", \"timestamp\",\"employee_name\"],\r\n    order_by=\"timestamp desc\",\r\n    limit=1\r\n)\r\n\r\nif latest_log:\r\n    frappe.response['message'] = latest_log[0]\r\nelse:\r\n    frappe.throw(\"No biometric log found in the last 30 seconds.\")\r\n",
   "script_type": "API"
  }
 ]
