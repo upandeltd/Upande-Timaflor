@@ -43,7 +43,7 @@ class ChemicalOrderSheet(Document):
                 # Calculate for each farm area
                 for area in self.farm_area_to_spray:
                     # Calculate required quantity for each area
-                    # Formula: Area size * Application Rate * Number of Sprays
+                    # Formulae: Area size * Application Rate * Number of Sprays
                     if area.tima_1:
                         order_row["tima_1"] = float(area.tima_1) * float(spray.application_rate_per_hectare) * float(spray.number_of_sprays)
                     if area.tima_2:
@@ -61,10 +61,10 @@ class ChemicalOrderSheet(Document):
                     if area.jangwani:
                         order_row["jangwani"] = float(area.jangwani) * float(spray.application_rate_per_hectare) * float(spray.number_of_sprays)
                 
-                # Get current stock (safely handle possible None return)
+                # Get current stock 
                 current_stock = get_item_stock(spray.chemical) or 0
                 
-                # Subtract current stock from the first non-zero area (priority order)
+                # Subtract current stock from the first non-zero area 
                 if current_stock > 0:
                     for field in ["tima_1", "tima_2", "tima_3", "tima_4", "tima_5", "tima_6", "tima_7", "jangwani"]:
                         if order_row[field] > 0:
@@ -78,7 +78,6 @@ class ChemicalOrderSheet(Document):
                         if current_stock <= 0:
                             break
                 
-                # Add to parent document
                 self.append("order_detail", order_row)
             
             except Exception as e:
@@ -95,7 +94,6 @@ class ChemicalOrderSheet(Document):
         # Check if total_order_amount field exists in the doctype
         field_exists = False
         try:
-            # Try to get the field metadata
             doctype_fields = frappe.get_meta(self.doctype).fields
             field_exists = any(field.fieldname == 'total_order_amount' for field in doctype_fields)
             
@@ -122,18 +120,14 @@ class ChemicalOrderSheet(Document):
                     (float(item.jangwani or 0))
                 )
                 
-                # Get item rate (safely handle possible None return)
                 rate = frappe.get_value("Item", item.item, "valuation_rate") or 0
                 
-                # Add to total
                 total += total_qty * rate
             
             except Exception as e:
                 frappe.log_error(f"Error calculating total for item {item.item}: {str(e)}", "ChemicalOrderSheet")
                 continue
         
-        # Always set the total_order_amount, even if the field doesn't exist
-        # The document will still save but the field won't be displayed
         try:
             self.total_order_amount = total
         except Exception as e:
@@ -230,7 +224,6 @@ def calculate_order_quantities(doc):
             # Get current stock
             current_stock = get_item_stock(spray.get('chemical'))
             
-            # Subtract current stock from the first non-zero area (priority order)
             if current_stock > 0:
                 for field in ["tima_1", "tima_2", "tima_3", "tima_4", "tima_5", "tima_6", "tima_7", "jangwani"]:
                     if order_row[field] > 0:

@@ -1,24 +1,5 @@
 [
  {
-  "allow_guest": 0,
-  "api_method": null,
-  "cron_format": null,
-  "disabled": 0,
-  "docstatus": 0,
-  "doctype": "Server Script",
-  "doctype_event": "Before Submit",
-  "enable_rate_limit": 0,
-  "event_frequency": "All",
-  "modified": "2025-02-27 07:18:18.073548",
-  "module": null,
-  "name": "Landed Cost Voucher",
-  "rate_limit_count": 5,
-  "rate_limit_seconds": 86400,
-  "reference_doctype": "Landed Cost Voucher",
-  "script": "import frappe\n\ndef before_submit(doc, method):\n    # Link LCV to Goods Received Notes (GRN)\n    for grn in doc.purchase_receipts:\n        grn_doc = frappe.get_doc(\"Purchase Receipt\", grn.receipt_document)\n        grn_doc.landed_cost_voucher = doc.name\n        grn_doc.save()\n\n    # Notify Finance Team\n    recipients = [\"finance@timaflor.com\"]\n    message = f\"Landed Cost Voucher {doc.name} has been submitted. Total charges: {sum([c.amount for c in doc.applicable_charges])}\"\n    \n    frappe.sendmail(\n        recipients=recipients,\n        subject=\"New Landed Cost Voucher Submitted\",\n        message=message\n    )\n",
-  "script_type": "DocType Event"
- },
- {
   "allow_guest": 1,
   "api_method": "get_latest_biometric_log",
   "cron_format": null,
@@ -28,14 +9,13 @@
   "doctype_event": "Before Insert",
   "enable_rate_limit": 0,
   "event_frequency": "All",
-  "modified": "2025-05-02 08:43:40.396188",
- "module": "Upande Timaflor",
- "name": "get_latest_biometric_log",
+  "modified": "2025-04-20 09:42:54.663930",
+  "module": "Upande Timaflor",
+  "name": "get_latest_biometric_log",
   "rate_limit_count": 5,
   "rate_limit_seconds": 86400,
   "reference_doctype": null,
-  "script": "time_threshold = frappe.utils.add_to_date(frappe.utils.now_datetime(), minutes=-5000000)\r\n\r\nlatest_log = frappe.get_all(\r\n    \"Biometric Log\",\r\n    filters={\r\n        \"timestamp\": [\">\", time_threshold]\r\n    },\r\n    fields=[\"employee\", \"biometric_id\", \"timestamp\",\"employee_name\"],\r\n    order_by=\"timestamp desc\",\r\n    limit=1\r\n)\r\n\r\nif latest_log:\r\n    frappe.response['message'] = latest_log[0]\r\nelse:\r\n    frappe.throw(\"No biometric log found in the last 30 seconds.\")\r\n",
-
+  "script": "time_threshold = frappe.utils.add_to_date(frappe.utils.now_datetime(), minutes=-100000)\r\n\r\nlatest_log = frappe.get_all(\r\n    \"Biometric Log\",\r\n    filters={\r\n        \"timestamp\": [\">\", time_threshold]\r\n    },\r\n    fields=[\"employee\", \"biometric_id\", \"timestamp\",\"employee_name\"],\r\n    order_by=\"timestamp desc\",\r\n    limit=1\r\n)\r\n\r\nif latest_log:\r\n    frappe.response['message'] = latest_log[0]\r\nelse:\r\n    frappe.throw(\"No biometric log found in the last 30 seconds.\")\r\n",
   "script_type": "API"
  }
 ]
