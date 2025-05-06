@@ -12872,7 +12872,7 @@
   "is_hidden": 0,
   "label": "Production Manager Workspace",
   "links": [],
-  "modified": "2025-04-27 20:03:57.698166",
+  "modified": "2025-05-02 12:46:24.963134",
   "module": null,
   "name": "Production Manager Workspace",
   "number_cards": [],
@@ -12901,7 +12901,57 @@
    }
   ],
   "sequence_id": 6.0,
-  "shortcuts": [],
+  "shortcuts": [
+   {
+    "color": "Grey",
+    "doc_view": "List",
+    "format": null,
+    "icon": null,
+    "kanban_board": null,
+    "label": "Bill Of Materials (BOM)",
+    "link_to": "BOM",
+    "parent": "Production Manager Workspace",
+    "parentfield": "shortcuts",
+    "parenttype": "Workspace",
+    "restrict_to_domain": null,
+    "stats_filter": "[]",
+    "type": "DocType",
+    "url": null
+   },
+   {
+    "color": "Grey",
+    "doc_view": "List",
+    "format": null,
+    "icon": null,
+    "kanban_board": null,
+    "label": "Work Order",
+    "link_to": "Work Order",
+    "parent": "Production Manager Workspace",
+    "parentfield": "shortcuts",
+    "parenttype": "Workspace",
+    "restrict_to_domain": null,
+    "stats_filter": "[]",
+    "type": "DocType",
+    "url": null
+   },
+   {
+    "color": "Grey",
+    "doc_view": "List",
+    "format": null,
+    "icon": null,
+    "kanban_board": null,
+    "label": "Material Request",
+    "link_to": "Material Request",
+    "parent": "Production Manager Workspace",
+    "parentfield": "shortcuts",
+    "parenttype": "Workspace",
+    "restrict_to_domain": null,
+    "stats_filter": "[]",
+    "type": "DocType",
+    "url": null
+   }
+  ],
+
   "title": "Production Manager Workspace"
  },
  {
@@ -14079,6 +14129,7 @@
   "title": "Accounting Workspace"
  },
  {
+
   "charts": [],
   "content": "[{\"id\":\"Ivw1PI_wEJ\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Your Shortcuts</b></span>\",\"col\":12}},{\"id\":\"RrWFEi4kCf\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Item\",\"col\":3}},{\"id\":\"RFIakryyJP\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Material Request\",\"col\":3}},{\"id\":\"bM10abFmf6\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Order\",\"col\":3}},{\"id\":\"lR0Hw_37Pu\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Analytics\",\"col\":3}},{\"id\":\"_HN0Ljw1lX\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Purchase Order Analysis\",\"col\":3}},{\"id\":\"kuLuiMRdnX\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Dashboard\",\"col\":3}},{\"id\":\"tQFeiKptW2\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Learn Procurement\",\"col\":3}},{\"id\":\"0NiuFE_EGS\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"Xe2GVLOq8J\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Reports &amp; Masters</b></span>\",\"col\":12}},{\"id\":\"QwqyG6XuUt\",\"type\":\"card\",\"data\":{\"card_name\":\"Buying\",\"col\":4}},{\"id\":\"bTPjOxC_N_\",\"type\":\"card\",\"data\":{\"card_name\":\"Items & Pricing\",\"col\":4}},{\"id\":\"87ht0HIneb\",\"type\":\"card\",\"data\":{\"card_name\":\"Settings\",\"col\":4}},{\"id\":\"EDOsBOmwgw\",\"type\":\"card\",\"data\":{\"card_name\":\"Supplier\",\"col\":4}},{\"id\":\"oWNNIiNb2i\",\"type\":\"card\",\"data\":{\"card_name\":\"Supplier Scorecard\",\"col\":4}},{\"id\":\"7F_13-ihHB\",\"type\":\"card\",\"data\":{\"card_name\":\"Key Reports\",\"col\":4}},{\"id\":\"pfwiLvionl\",\"type\":\"card\",\"data\":{\"card_name\":\"Other Reports\",\"col\":4}}]",
   "custom_blocks": [],
@@ -15060,6 +15111,7 @@
   "title": "Procurement Workspace"
  },
  {
+
   "charts": [
    {
     "chart_name": "Warehouse wise Stock Value",
@@ -20310,6 +20362,7 @@
    }
   ],
   "title": "PM Manufacturing"
+
  },
  {
   "charts": [
@@ -22043,5 +22096,6 @@
    }
   ],
   "title": "Sensors"
+
  }
 ]
