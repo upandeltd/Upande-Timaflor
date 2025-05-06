@@ -1,26 +1,12 @@
 // Copyright (c) 2025, newton@upande.com and contributors
 // For license information, please see license.txt
 
-<<<<<<< HEAD
-// frappe.ui.form.on("Fertilizer Order Sheet", {
-// 	refresh(frm) {
-
-// 	},
-// });
-=======
->>>>>>> ebc274bc126783f1be3d29b7eb4bff38c9b93581
 frappe.ui.form.on('Fertilizer Order Sheet', {
     refresh: function(frm) {
         frm.add_custom_button(__('Calculate Order Quantities'), function() {
             calculate_order_quantities(frm);
         });
 
-<<<<<<< HEAD
-        // Add button to copy data to a Material Request
-        frm.add_custom_button(__('Create Material Request'), function() {
-            create_material_request(frm);
-        }).addClass('btn-primary');
-=======
         if (frm.doc.order_quantity && frm.doc.order_quantity.length > 0) {
             // Add button to create Material Request
             frm.add_custom_button(__('Create Material Request'), function() {
@@ -37,7 +23,6 @@ frappe.ui.form.on('Fertilizer Order Sheet', {
                 create_purchase_order(frm);
             }, __('Create'));
         }
->>>>>>> ebc274bc126783f1be3d29b7eb4bff38c9b93581
     },
     
     average_consumption: function(frm) {
@@ -49,11 +34,7 @@ frappe.ui.form.on('Fertilizer Order Sheet', {
     },
     
     stock_wantedweeks: function(frm) {
-<<<<<<< HEAD
-        // Recalculate order quantities when weeks change if we have data
-=======
         // Recalculate order quantities when weeks change 
->>>>>>> ebc274bc126783f1be3d29b7eb4bff38c9b93581
         if(frm.doc.weekly_average_consumption && frm.doc.weekly_average_consumption.length > 0 && 
            frm.doc.stock_levels && frm.doc.stock_levels.length > 0) {
             calculate_order_quantities(frm);
@@ -151,8 +132,6 @@ function create_material_request(frm) {
             }
         }
     });
-<<<<<<< HEAD
-=======
 }
 
 function create_request_for_quotation(frm) {
@@ -255,5 +234,4 @@ function create_purchase_order(frm) {
     });
     
     d.show();
->>>>>>> ebc274bc126783f1be3d29b7eb4bff38c9b93581
 }
