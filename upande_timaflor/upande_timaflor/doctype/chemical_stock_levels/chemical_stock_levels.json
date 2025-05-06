@@ -1,0 +1,106 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-04-30 07:12:33.212324",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "order_quantity_section",
+  "item",
+  "tima_1",
+  "tima_2",
+  "tima_3",
+  "tima_4",
+  "tima_5",
+  "tima_6",
+  "tima_7",
+  "jangwani"
+ ],
+ "fields": [
+  {
+   "columns": 10,
+   "fieldname": "order_quantity_section",
+   "fieldtype": "Section Break",
+   "label": "Order Quantity"
+  },
+  {
+   "columns": 1,
+   "fieldname": "item",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Item",
+   "options": "Item"
+  },
+  {
+   "columns": 1,
+   "fieldname": "tima_1",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "TIMA 1"
+  },
+  {
+   "columns": 1,
+   "fieldname": "tima_2",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "TIMA 2"
+  },
+  {
+   "columns": 1,
+   "fieldname": "tima_3",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "TIMA 3"
+  },
+  {
+   "columns": 1,
+   "fieldname": "tima_4",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "TIMA 4"
+  },
+  {
+   "columns": 1,
+   "fieldname": "tima_5",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "TIMA 5"
+  },
+  {
+   "columns": 1,
+   "fieldname": "tima_6",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "TIMA 6"
+  },
+  {
+   "columns": 1,
+   "fieldname": "tima_7",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "TIMA 7"
+  },
+  {
+   "columns": 1,
+   "fieldname": "jangwani",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Jangwani"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-04-30 07:12:33.212324",
+ "modified_by": "Administrator",
+ "module": "Upande Timaflor",
+ "name": "Chemical Stock Levels",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

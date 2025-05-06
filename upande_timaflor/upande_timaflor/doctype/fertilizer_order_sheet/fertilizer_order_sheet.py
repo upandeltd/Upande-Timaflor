@@ -1,16 +1,15 @@
 # Copyright (c) 2025, newton@upande.com and contributors
 # For license information, please see license.txt
 
-# import frappe
+import frappe
+from frappe import _
 from frappe.model.document import Document
+from datetime import datetime, timedelta
 
 
 class FertilizerOrderSheet(Document):
-	pass
-# In fertilizer_order.py
-import frappe
-from frappe import _
-from datetime import datetime, timedelta
+    pass
+
 
 @frappe.whitelist()
 def calculate_fertilizer_matrix_data(average_consumption, stock_wantedweeks):
@@ -32,7 +31,6 @@ def calculate_fertilizer_matrix_data(average_consumption, stock_wantedweeks):
     # Get all fertilizer items
     fertilizer_items = get_fertilizer_items()
     
-    # Get list of all farms
     farms = ["Tima1", "Tima2", "Tima3", "Tima4", "Tima5", "Tima6", "Tima7", "Jangwani"]
     
     # Get farm warehouses mapping
@@ -40,13 +38,10 @@ def calculate_fertilizer_matrix_data(average_consumption, stock_wantedweeks):
     for farm in farms:
         farm_warehouses[farm] = get_farm_warehouses(farm)
     
-    # Calculate average consumption matrix
     consumption_data = calculate_average_consumption_matrix(fertilizer_items, farm_warehouses, avg_consumption_weeks)
     
-    # Get current stock levels matrix
     stock_data = get_current_stock_levels_matrix(fertilizer_items, farm_warehouses)
     
-    # Calculate order quantities matrix
     order_qty_data = calculate_order_quantities_matrix(consumption_data, stock_data, wanted_weeks)
     
     return {
@@ -54,6 +49,7 @@ def calculate_fertilizer_matrix_data(average_consumption, stock_wantedweeks):
         "stock": stock_data,
         "order_qty": order_qty_data
     }
+
 
 def get_fertilizer_items():
     """Get all items from the Fertilizer Item Group"""
@@ -64,6 +60,7 @@ def get_fertilizer_items():
     )
     return items
 
+
 def get_farm_warehouses(farm):
     """Get all warehouses linked to the specified farm"""
     warehouses = frappe.get_all(
@@ -72,6 +69,7 @@ def get_farm_warehouses(farm):
         fields=["name"]
     )
     return [w.name for w in warehouses]
+
 
 def calculate_average_consumption_matrix(fertilizer_items, farm_warehouses, weeks):
     """
@@ -136,6 +134,7 @@ def calculate_average_consumption_matrix(fertilizer_items, farm_warehouses, week
     
     return consumption_data
 
+
 def get_current_stock_levels_matrix(fertilizer_items, farm_warehouses):
     """Get current stock levels for all fertilizer items for each farm"""
     stock_data = []
@@ -181,7 +180,6 @@ def get_current_stock_levels_matrix(fertilizer_items, farm_warehouses):
             
             current_stock = stock_balance[0].current_stock if stock_balance[0].current_stock else 0
             
-            # Map farm to the corresponding field name
             field_name = farm_mapping.get(farm, "").lower()
             if field_name:
                 item_data[field_name] = current_stock
@@ -189,6 +187,7 @@ def get_current_stock_levels_matrix(fertilizer_items, farm_warehouses):
         stock_data.append(item_data)
     
     return stock_data
+
 
 def calculate_order_quantities_matrix(consumption_data, stock_data, wanted_weeks):
     """
@@ -198,7 +197,6 @@ def calculate_order_quantities_matrix(consumption_data, stock_data, wanted_weeks
     """
     order_qty_data = []
     
-    # Create lookup dictionaries for consumption and stock
     consumption_dict = {item["item_code"]: item for item in consumption_data}
     stock_dict = {item["item_code"]: item for item in stock_data}
     
@@ -218,10 +216,8 @@ def calculate_order_quantities_matrix(consumption_data, stock_data, wanted_weeks
             avg_consumption = consumption_item.get(field, 0)
             current_stock = stock_item.get(field, 0)
             
-            # Calculate order quantity using the formula
             calculated_qty = (avg_consumption * wanted_weeks) - current_stock
             
-            # Ensure order quantity is not negative
             calculated_qty = max(0, calculated_qty)
             
             item_data[field] = calculated_qty
@@ -230,10 +226,11 @@ def calculate_order_quantities_matrix(consumption_data, stock_data, wanted_weeks
     
     return order_qty_data
 
+
 @frappe.whitelist()
 def create_material_request(doc_name):
     """Create a Material Request based on the Order Quantity table"""
-    fertilizer_order = frappe.get_doc("Fertilizer Order", doc_name)
+    fertilizer_order = frappe.get_doc("Fertilizer Order Sheet", doc_name)
     
     if not fertilizer_order.order_quantity:
         frappe.throw(_("No order quantities found"))
@@ -253,11 +250,16 @@ def create_material_request(doc_name):
         for farm in farms:
             qty = getattr(row, farm, 0)
             if qty > 0:
+                stock_uom = frappe.db.get_value("Item", row.item, "stock_uom")
+                
                 mr.append("items", {
                     "item_code": row.item,
                     "qty": qty,
                     "schedule_date": mr.schedule_date,
                     "warehouse": get_default_warehouse_for_farm(farm.replace("_", "")),
+                    "stock_uom": stock_uom,
+                    "uom": stock_uom,
+                    "conversion_factor": 1.0,
                     "description": f"For farm {farm.replace('_', ' ').title()}"
                 })
     
@@ -273,13 +275,220 @@ def create_material_request(doc_name):
     
     return mr.name
 
+
+@frappe.whitelist()
+def create_request_for_quotation(doc_name, supplier=None):
+    """Create a Request for Quotation based on the Order Quantity table"""
+    fertilizer_order = frappe.get_doc("Fertilizer Order Sheet", doc_name)
+    
+    if not fertilizer_order.order_quantity:
+        frappe.throw(_("No order quantities found"))
+    
+    # Create a new Request for Quotation
+    rfq = frappe.new_doc("Request for Quotation")
+    rfq.transaction_date = datetime.now().date()
+    rfq.title = f"Fertilizer Order {fertilizer_order.name}"
+    
+    # Get default company
+    default_company = frappe.defaults.get_user_default("Company")
+    rfq.company = default_company
+    
+    # Add items from order quantity table
+    farms = ["tima_1", "tima_2", "tima_3", "tima_4", "tima_5", "tima_6", "tima_7", "jangwani"]
+    
+    item_totals = {}  
+    
+    # First pass: aggregate quantities by item
+    for row in fertilizer_order.order_quantity:
+        item_code = row.item
+        if item_code not in item_totals:
+            item_totals[item_code] = 0
+            
+        for farm in farms:
+            qty = getattr(row, farm, 0)
+            if qty > 0:
+                item_totals[item_code] += qty
+    
+    # Get a warehouse that belongs to the company
+    warehouse = get_company_warehouse(default_company)
+    
+    # Second pass: add items to RFQ
+    for item_code, total_qty in item_totals.items():
+        if total_qty > 0:
+            item_name = frappe.db.get_value("Item", item_code, "item_name")
+            stock_uom = frappe.db.get_value("Item", item_code, "stock_uom")
+            
+            # Add conversion factor of 1 explicitly
+            rfq.append("items", {
+                "item_code": item_code,
+                "item_name": item_name,
+                "qty": total_qty,
+                "schedule_date": datetime.now().date() + timedelta(days=7),
+                "uom": stock_uom,
+                "stock_uom": stock_uom,  # Add stock UOM
+                "conversion_factor": 1.0,  # Add conversion factor explicitly
+                "warehouse": warehouse
+            })
+    
+    if not rfq.items:
+        frappe.throw(_("No items with quantities greater than zero found"))
+    
+    # Add supplier if provided
+    if supplier:
+        rfq.append("suppliers", {
+            "supplier": supplier,
+            "supplier_name": frappe.db.get_value("Supplier", supplier, "supplier_name"),
+        })
+    
+    # Set message for supplier to prevent mandatory field error
+    rfq.message_for_supplier = "Please provide a quotation for the items listed."
+    
+    rfq.insert()
+    
+    # Link the RFQ back to the Fertilizer Order Sheet
+    fertilizer_order.request_for_quotation = rfq.name
+    fertilizer_order.save()
+    
+    return rfq.name
+
+
+@frappe.whitelist()
+def create_purchase_order(doc_name, supplier=None):
+    """Create a Purchase Order directly based on the Order Quantity table"""
+    fertilizer_order = frappe.get_doc("Fertilizer Order Sheet", doc_name)
+    
+    if not fertilizer_order.order_quantity:
+        frappe.throw(_("No order quantities found"))
+    
+    if not supplier:
+        frappe.throw(_("Supplier is required to create a Purchase Order"))
+    
+    default_company = frappe.defaults.get_user_default("Company")
+    
+    # Create a new Purchase Order
+    po = frappe.new_doc("Purchase Order")
+    po.supplier = supplier
+    po.company = default_company  # Set company explicitly
+    po.transaction_date = datetime.now().date()
+    po.schedule_date = datetime.now().date() + timedelta(days=7)
+    po.title = f"Fertilizer Order {fertilizer_order.name}"
+    
+    # Add items from order quantity table
+    farms = ["tima_1", "tima_2", "tima_3", "tima_4", "tima_5", "tima_6", "tima_7", "jangwani"]
+    
+    item_totals = {}  # To aggregate quantities by item
+    
+    # First pass: aggregate quantities by item
+    for row in fertilizer_order.order_quantity:
+        item_code = row.item
+        if item_code not in item_totals:
+            item_totals[item_code] = 0
+            
+        for farm in farms:
+            qty = getattr(row, farm, 0)
+            if qty > 0:
+                item_totals[item_code] += qty
+    
+    # Get a warehouse that belongs to the company
+    warehouse = get_company_warehouse(default_company)
+    
+    # Second pass: add items to PO
+    for item_code, total_qty in item_totals.items():
+        if total_qty > 0:
+            # Get last purchase rate
+            last_purchase_rate = frappe.db.get_value("Item Price", 
+                {"item_code": item_code, "buying": 1, "price_list": "Standard Buying"}, 
+                "price_list_rate") or 0
+            
+            stock_uom = frappe.db.get_value("Item", item_code, "stock_uom")
+            
+            po.append("items", {
+                "item_code": item_code,
+                "qty": total_qty,
+                "schedule_date": po.schedule_date,
+                "warehouse": warehouse,
+                "stock_uom": stock_uom,
+                "uom": stock_uom,
+                "conversion_factor": 1.0,
+                "rate": last_purchase_rate
+            })
+    
+    if not po.items:
+        frappe.throw(_("No items with quantities greater than zero found"))
+    
+    po.insert()
+    
+    # Link the Purchase Order to the Fertilizer Order Sheet
+    fertilizer_order.purchase_order = po.name
+    fertilizer_order.save()
+    
+    return po.name
+
+
+def get_company_warehouse(company):
+    """Get a warehouse belonging to the specified company"""
+    # Try to get a warehouse that belongs to the company
+    warehouses = frappe.get_all(
+        "Warehouse", 
+        filters={"company": company, "is_group": 0},
+        fields=["name"],
+        limit=1
+    )
+    
+    if warehouses:
+        return warehouses[0].name
+    
+    # Fallback to default warehouse if it belongs to the company
+    default_warehouse = frappe.db.get_single_value("Stock Settings", "default_warehouse")
+    if default_warehouse:
+        warehouse_company = frappe.db.get_value("Warehouse", default_warehouse, "company")
+        if warehouse_company == company:
+            return default_warehouse
+    
+    # If no suitable warehouse found, throw an error
+    frappe.throw(_("No warehouse found for company {0}. Please create a warehouse for this company first.").format(company))
+
+
+def get_default_warehouse():
+    """Get default warehouse for purchases with company validation"""
+    default_company = frappe.defaults.get_user_default("Company")
+    default_warehouse = frappe.db.get_single_value("Stock Settings", "default_warehouse")
+    
+    if default_warehouse:
+        # Verify warehouse belongs to the company
+        warehouse_company = frappe.db.get_value("Warehouse", default_warehouse, "company")
+        if warehouse_company == default_company:
+            return default_warehouse
+    
+    # Fallback to first warehouse found for the company
+    warehouses = frappe.get_all(
+        "Warehouse", 
+        filters={"is_group": 0, "company": default_company},
+        limit=1
+    )
+    
+    if warehouses:
+        return warehouses[0].name
+    
+    frappe.throw(_("No warehouse found for company {0}").format(default_company))
+
+
 def get_default_warehouse_for_farm(farm):
-    """Get the default warehouse for a farm (fertilizer store)"""
-    warehouse_name = f"Fertilizer Store -{farm.replace('Tima', 'T')} - T"
+    """Get the default warehouse for a farm (fertilizer store) with company validation"""
+    default_company = frappe.defaults.get_user_default("Company")
+    warehouse_name = f"Fertilizer Store -{farm.replace('Tima', 'T')} - TF"
     
-    # Check if warehouse exists
+    # Check if warehouse exists and belongs to the company
     if frappe.db.exists("Warehouse", warehouse_name):
-        return warehouse_name
+        warehouse_company = frappe.db.get_value("Warehouse", warehouse_name, "company")
+        if warehouse_company == default_company:
+            return warehouse_name
     
-    # Otherwise, return a default warehouse
-    return frappe.db.get_single_value("Stock Settings", "default_warehouse")
+    # Try alternative format if the first naming convention didn't work
+    warehouse_name = f"Fertilizer Store - {farm.title()} - TF"
+    if frappe.db.exists("Warehouse", warehouse_name):
+        warehouse_company = frappe.db.get_value("Warehouse", warehouse_name, "company")
+        if warehouse_company == default_company:
+            return warehouse_name
+    
+    return get_default_warehouse()

@@ -87,11 +87,13 @@ from frappe.utils import flt
 # hooks.py
 fixtures = [
     {
+
         "dt": "Server Script",
         "filters": [
             ["name", "in", [
                 "get_latest_biometric_log"
             ]]
+
         ]
     },
     {
