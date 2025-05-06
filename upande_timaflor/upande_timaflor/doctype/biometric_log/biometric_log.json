@@ -1,5 +1,6 @@
 {
  "actions": [],
+ "allow_import": 1,
  "autoname": "autoincrement",
  "creation": "2025-04-14 18:01:37.820178",
  "doctype": "DocType",
@@ -49,7 +50,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-04-14 18:59:50.760911",
+ "modified": "2025-04-25 08:58:53.347679",
  "modified_by": "Administrator",
  "module": "Upande Timaflor",
  "name": "Biometric Log",
