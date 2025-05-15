@@ -1,8 +1,0 @@
-{
-    "name": "Supplier Ledger",
-    "module": "Accounts",
-    "report_type": "Script Report",
-    "ref_doctype": "Purchase Invoice",
-    "is_standard": "No"
-  }
-  
