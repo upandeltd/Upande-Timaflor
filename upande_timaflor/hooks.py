@@ -91,7 +91,8 @@ fixtures = [
         "dt": "Server Script",
         "filters": [
             ["name", "in", [
-                "get_latest_biometric_log"
+                "get_latest_biometric_log",
+                "add_biometric_data_after_submit"
             ]]
 
         ]
@@ -101,7 +102,8 @@ fixtures = [
         "filters": [
             ["name", "in", [
                 "Biometric Signature",
-                "Material Assigned To Employee"
+                "Material Assigned To Employee",
+                "Biometric Script  Stock Entry"
            ]]
         ]
     },
@@ -127,23 +129,7 @@ fixtures = [
                 "Biometric Log",
                 "Biometric Signature",
                 "Assigned To Material",
-                "Greenhouse",
-                "Ordering Sheet",
-                "Order Detail",
-                "Order Quantity",
-                "Daily Maximum Consumption",
-                "Daily Minimum Consumption",
-                "Fertilizer Order Sheet",
-                "Fertilizer Stock Levels",
-                "Chemical Stock Levels",
-                "Chemical Order Sheet",
-                "Chemical Order Quantity",
-                "Area To Spray",
-                "Chemical Sprays",
-                "Fertilizer Average Consumption",
-                "Stock Levels",
-                "Quantity To Order",
-                "Chemical Target"
+                
             ]]
         ]
     }
