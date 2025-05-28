@@ -1,34 +1,38 @@
 frappe.ui.form.on('Fertilizer Order Sheet', {
     refresh: function(frm) {
         // Add custom buttons
+        frm.add_custom_button(__('Calculate & Populate Averages'), function() {
+            calculate_and_populate_averages(frm);
+        }).addClass('btn-primary');
+
         frm.add_custom_button(__('Refresh Stock Levels'), function() {
             refresh_stock_levels(frm);
         }).addClass('btn-primary');
-
-        frm.add_custom_button(__('Add All Fertilizers'), function() {
-            add_all_fertilizers(frm);
-        }).addClass('btn-success');
 
         frm.add_custom_button(__('Calculate Order Quantities'), function() {
             calculate_order_quantities(frm);
         }).addClass('btn-info');
 
-        frm.add_custom_button(__('Clean Up Data'), function() {
-            cleanup_consumption_data(frm);
-        }).addClass('btn-warning');
+        // Create RFQ & PO Buttons
+        frm.add_custom_button(__('Create RFQ'), function() {
+            create_request_for_quotation(frm);
+        }, __('Create'));
+
+        frm.add_custom_button(__('Create PO'), function() {
+            create_purchase_order(frm, false);
+        }, __('Create'));
+    },
+
+        //frm.add_custom_button(__('Clean Up Data'), function() {
+            //cleanup_consumption_data(frm);
+        //}).addClass('btn-warning');
 
         // Debug buttons
-        frm.add_custom_button(__('Debug Data'), function() {
-            debug_fertilizer_data(frm);
-        }, __('Debug'));
+        //frm.add_custom_button(__('Debug Data'), function() {debug_fertilizer_data(frm); }, __('Debug'));
 
-        frm.add_custom_button(__('Validate Setup'), function() {
-            validate_setup(frm);
-        }, __('Debug'));
+        //frm.add_custom_button(__('Validate Setup'), function() {validate_setup(frm); }, __('Debug'));
 
-        frm.add_custom_button(__('Debug Consumption'), function() {
-            debug_consumption_table(frm);
-        }, __('Debug'));
+        //frm.add_custom_button(__('Debug Consumption'), function() {debug_consumption_table(frm);}, __('Debug'));
     },
 
     average_consumption: function(frm) {
@@ -165,6 +169,69 @@ function debug_fertilizer_data(frm) {
                         Check console for detailed data.
                     `,
                     indicator: 'blue'
+                });
+            }
+        }
+    });
+}
+
+function calculate_and_populate_averages(frm) {
+    // The input for weeks is now read from the main 'average_consumption' field
+    let weeks = frm.doc.average_consumption;
+    
+    if (!weeks || weeks <= 0) {
+        frappe.msgprint({
+            title: __('Input Required'),
+            indicator: 'orange',
+            // The message now refers to the relabeled field
+            message: __('Please enter a valid number in the "Weeks for Avg. Calculation" field first.')
+        });
+        return;
+    }
+
+    frappe.call({
+        method: 'upande_timaflor.upande_timaflor.doctype.fertilizer_order_sheet.fertilizer_order_sheet.calculate_historical_consumption',
+        args: {
+            // Pass the value to the python function
+            weeks_to_calculate: weeks
+        },
+        freeze: true,
+        freeze_message: __('Calculating historical averages for the last {0} weeks...', [weeks]),
+        callback: function(r) {
+            if (r.message && !r.message.error) {
+                let data = r.message;
+                if (!data || data.length === 0) {
+                    frappe.msgprint({ message: __('No fertilizer items found or no consumption data for the selected period.'), indicator: 'orange' });
+                    return;
+                }
+
+                // Clear the table to ensure a fresh list
+                frm.clear_table('weekly_average_consumption');
+
+                let stock_wanted_weeks = frm.doc.stock_wanted_weeks || 0;
+
+                data.sort((a, b) => a.item_name.localeCompare(b.item_name)).forEach(item => {
+                    let row = frm.add_child('weekly_average_consumption');
+                    row.item = item.item_code;
+                    row.item_name = item.item_name;
+                    // The calculated average is populated into the child table's 'average_consumption' field
+                    row.average_consumption = item.average_consumption;
+                    row.stock_wanted_weeks = stock_wanted_weeks > 0 ? stock_wanted_weeks : 0;
+                });
+
+                frm.refresh_field('weekly_average_consumption');
+                frm.save().then(() => {
+                    frappe.show_alert({
+                        message: __('Successfully calculated and populated averages for {0} items.', [data.length]),
+                        indicator: 'green'
+                    }, 7);
+                });
+
+            } else {
+                frappe.msgprint({
+                    title: __('Error'),
+                    indicator: 'red',
+                    message: r.message?.error || __('An unknown error occurred during calculation.')
                 });
             }
         }
