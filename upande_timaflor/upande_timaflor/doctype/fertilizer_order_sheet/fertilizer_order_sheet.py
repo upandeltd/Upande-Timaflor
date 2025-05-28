@@ -1,6 +1,71 @@
 import frappe
 from frappe import _
-from frappe.utils import flt
+from frappe.utils import flt, nowdate, add_to_date  
+
+
+@frappe.whitelist()
+def calculate_historical_consumption(weeks_to_calculate):
+    """
+    Calculates the average weekly consumption of fertilizer items based on historical
+    Stock Ledger Entries over a specified number of weeks.
+    """
+    try:
+        weeks = flt(weeks_to_calculate)
+        if weeks <= 0:
+            frappe.throw(_("Number of weeks must be a positive number."))
+
+        to_date = nowdate()
+        from_date = add_to_date(to_date, weeks=-weeks)
+
+        fertilizer_items = frappe.get_all("Item",
+            filters={"item_group": "Fertilizer", "disabled": 0},
+            fields=["name", "item_name"]
+        )
+        if not fertilizer_items:
+            return []
+
+        fertilizer_item_codes = [item['name'] for item in fertilizer_items]
+
+        consumption_data = frappe.db.sql("""
+            SELECT
+                item_code,
+                SUM(actual_qty) as total_consumed
+            FROM `tabStock Ledger Entry`
+            WHERE
+                item_code IN %(item_codes)s
+                AND posting_date BETWEEN %(from_date)s AND %(to_date)s
+                AND actual_qty < 0
+                AND is_cancelled = 0
+            GROUP BY
+                item_code
+        """, {
+            "item_codes": fertilizer_item_codes,
+            "from_date": from_date,
+            "to_date": to_date
+        }, as_dict=1)
+
+        consumption_map = {
+            entry.item_code: abs(entry.total_consumed) for entry in consumption_data
+        }
+
+        result = []
+        for item in fertilizer_items:
+            total_consumed = flt(consumption_map.get(item['name'], 0))
+            average_consumption = flt(total_consumed / weeks, 2)
+
+            result.append({
+                "item_code": item['name'],
+                "item_name": item['item_name'] or item['name'],
+                "average_consumption": average_consumption
+            })
+
+        return result
+
+    except Exception as e:
+        frappe.log_error(f"Historical Consumption Error: {str(e)}", "calculate_historical_consumption")
+        return {"error": str(e)}
+
+
 
 @frappe.whitelist()
 def get_warehouse_specific_stock():
