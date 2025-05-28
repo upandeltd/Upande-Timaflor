@@ -312,7 +312,10 @@ fixtures = [
 # 	"Logging DocType Name": 30  # days to retain logs
 # }
 
-
+# JS file to override ERPNext's material_request.js
+app_include_js = {
+    "erpnext": "public/js/material_request.js" 
+}
 
 # Document Events
 doc_events = {
