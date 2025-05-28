@@ -1,4 +1,4 @@
-# Copyright (c) 2025, newton@upande.com and contributors
+# Copyright (c) 2025, newton@upande.com
 # For license information, please see license.txt
 
 import frappe
@@ -7,240 +7,280 @@ import json
 
 class ChemicalOrderSheet(Document):
     def validate(self):
-        self.calculate_order_quantities_internal()
+        # Skip auto-calculation on validation
+        pass
     
     def calculate_order_quantities_internal(self):
         """Calculate order quantities based on farm areas, application rate, and spray count"""
         if not self.farm_area_to_spray or not self.spray_details:
             return
-        
-        # Clear existing order details
+
         self.order_detail = []
-        
-        # Process each chemical from spray details
+
         for spray in self.spray_details:
             if not spray.chemical or not spray.application_rate_per_hectare or not spray.number_of_sprays:
                 continue
             
-            try:
-                # Get item details
-                item = frappe.get_doc("Item", spray.chemical)
-                
-                # Create new order detail row
-                order_row = {
-                    "item": spray.chemical,
-                    "item_name": item.item_name,
-                    "tima_1": 0,
-                    "tima_2": 0,
-                    "tima_3": 0,
-                    "tima_4": 0,
-                    "tima_5": 0,
-                    "tima_6": 0,
-                    "tima_7": 0,
-                    "jangwani": 0
-                }
-                
-                # Calculate for each farm area
-                for area in self.farm_area_to_spray:
-                    # Calculate required quantity for each area
-                    # Formulae: Area size * Application Rate * Number of Sprays
-                    if area.tima_1:
-                        order_row["tima_1"] = float(area.tima_1) * float(spray.application_rate_per_hectare) * float(spray.number_of_sprays)
-                    if area.tima_2:
-                        order_row["tima_2"] = float(area.tima_2) * float(spray.application_rate_per_hectare) * float(spray.number_of_sprays)
-                    if area.tima_3:
-                        order_row["tima_3"] = float(area.tima_3) * float(spray.application_rate_per_hectare) * float(spray.number_of_sprays)
-                    if area.tima_4:
-                        order_row["tima_4"] = float(area.tima_4) * float(spray.application_rate_per_hectare) * float(spray.number_of_sprays)
-                    if area.tima_5:
-                        order_row["tima_5"] = float(area.tima_5) * float(spray.application_rate_per_hectare) * float(spray.number_of_sprays)
-                    if area.tima_6:
-                        order_row["tima_6"] = float(area.tima_6) * float(spray.application_rate_per_hectare) * float(spray.number_of_sprays)
-                    if area.tima_7:
-                        order_row["tima_7"] = float(area.tima_7) * float(spray.application_rate_per_hectare) * float(spray.number_of_sprays)
-                    if area.jangwani:
-                        order_row["jangwani"] = float(area.jangwani) * float(spray.application_rate_per_hectare) * float(spray.number_of_sprays)
-                
-                # Get current stock 
-                current_stock = get_item_stock(spray.chemical) or 0
-                
-                # Subtract current stock from the first non-zero area 
-                if current_stock > 0:
-                    for field in ["tima_1", "tima_2", "tima_3", "tima_4", "tima_5", "tima_6", "tima_7", "jangwani"]:
-                        if order_row[field] > 0:
-                            if current_stock >= order_row[field]:
-                                current_stock -= order_row[field]
-                                order_row[field] = 0
-                            else:
-                                order_row[field] -= current_stock
-                                current_stock = 0
-                        
-                        if current_stock <= 0:
-                            break
-                
-                self.append("order_detail", order_row)
-            
-            except Exception as e:
-                frappe.log_error(f"Error processing chemical {spray.chemical}: {str(e)}", "ChemicalOrderSheet")
+            item_code = spray.chemical
+            if not frappe.db.exists("Item", item_code):
+                frappe.log_error(f"Item {item_code} not found", "ChemicalOrderSheet")
                 continue
-        
-        # Calculate total order amount
+
+            item_name = frappe.db.get_value("Item", item_code, "item_name") or item_code
+
+            order_row = {
+                "item": item_code,
+                "item_name": item_name,
+                "tima_1": 0, "tima_2": 0, "tima_3": 0, "tima_4": 0,
+                "tima_5": 0, "tima_6": 0, "tima_7": 0, "jangwani": 0
+            }
+
+            for area in self.farm_area_to_spray:
+                for field in order_row.keys():
+                    if field in ["item", "item_name"]:
+                        continue
+                    try:
+                        area_size = float(getattr(area, field) or 0)
+                        app_rate = float(spray.application_rate_per_hectare or 0)
+                        spray_count = float(spray.number_of_sprays or 0)
+                        order_row[field] += area_size * app_rate * spray_count
+                    except Exception as e:
+                        frappe.log_error(f"Error calculating {field} for {item_code}: {str(e)}", "ChemicalOrderSheet")
+
+            current_stock = get_item_stock(item_code)
+            for field in order_row.keys():
+                if field in ["item", "item_name"]:
+                    continue
+                if order_row[field] > 0:
+                    if current_stock >= order_row[field]:
+                        current_stock -= order_row[field]
+                        order_row[field] = 0
+                    else:
+                        order_row[field] -= current_stock
+                        current_stock = 0
+                if current_stock <= 0:
+                    break
+
+            self.append("order_detail", order_row)
+
         self.calculate_total_amount()
-    
+
     def calculate_total_amount(self):
-        """Calculate total order amount"""
         total = 0
-        
-        # Check if total_order_amount field exists in the doctype
-        field_exists = False
         try:
-            doctype_fields = frappe.get_meta(self.doctype).fields
-            field_exists = any(field.fieldname == 'total_order_amount' for field in doctype_fields)
-            
-            if not field_exists:
-                frappe.log_error(
-                    f"Field 'total_order_amount' not found in DocType '{self.doctype}'. "
-                    f"Please add this field via Customize Form.",
-                    "ChemicalOrderSheet"
-                )
+            if not any(field.fieldname == 'total_order_amount'
+                       for field in frappe.get_meta(self.doctype).fields):
+                frappe.log_error(f"'total_order_amount' field missing in {self.doctype}", "ChemicalOrderSheet")
+                return
         except Exception as e:
-            frappe.log_error(f"Error checking for total_order_amount field: {str(e)}", "ChemicalOrderSheet")
-        
+            frappe.log_error(f"Meta error: {str(e)}", "ChemicalOrderSheet")
+            return
+
         for item in self.order_detail:
             try:
-                # Calculate total quantity for this item
-                total_qty = (
-                    (float(item.tima_1 or 0)) + 
-                    (float(item.tima_2 or 0)) + 
-                    (float(item.tima_3 or 0)) + 
-                    (float(item.tima_4 or 0)) + 
-                    (float(item.tima_5 or 0)) + 
-                    (float(item.tima_6 or 0)) + 
-                    (float(item.tima_7 or 0)) + 
-                    (float(item.jangwani or 0))
-                )
-                
-                rate = frappe.get_value("Item", item.item, "valuation_rate") or 0
-                
-                total += total_qty * rate
-            
+                item_code = item.item
+                total_qty = sum(float(getattr(item, field) or 0)
+                                for field in ["tima_1", "tima_2", "tima_3", "tima_4",
+                                              "tima_5", "tima_6", "tima_7", "jangwani"])
+                rate = frappe.db.get_value("Item", item_code, "valuation_rate") or 0
+                total += total_qty * float(rate)
             except Exception as e:
-                frappe.log_error(f"Error calculating total for item {item.item}: {str(e)}", "ChemicalOrderSheet")
-                continue
-        
-        try:
-            self.total_order_amount = total
-        except Exception as e:
-            frappe.log_error(f"Error setting total_order_amount: {str(e)}", "ChemicalOrderSheet")
+                frappe.log_error(f"Error calculating total for {item_code}: {str(e)}", "ChemicalOrderSheet")
+
+        self.total_order_amount = total
+
 
 @frappe.whitelist()
 def get_all_chemicals():
-    """Get all chemical items with their application rates"""
+    """Get all chemicals from Item master - DEBUG VERSION"""
     try:
-        chemicals = frappe.get_all('Item', 
-            filters={'item_group': 'Chemical', 'disabled': 0},
-            fields=['name', 'item_name']
+        # Log method entry
+        frappe.log_error("get_all_chemicals method called", "ChemicalOrderSheet Debug")
+        
+        # First, let's check if Chemical item group exists
+        if not frappe.db.exists("Item Group", "Chemical"):
+            frappe.log_error("Chemical Item Group does not exist", "ChemicalOrderSheet Debug")
+            return []
+        
+        # Get basic chemical data first (without custom fields to avoid errors)
+        chemicals = frappe.get_all("Item", 
+            filters={
+                "item_group": "Chemical",
+                "disabled": 0  # Only get enabled items
+            },  
+            fields=["name", "item_name"]
         )
         
-        # Log success for debugging
-        frappe.logger().debug(f"Retrieved {len(chemicals)} chemicals")
+        # Log results
+        frappe.log_error(f"get_all_chemicals: Found {len(chemicals)} enabled chemicals", "ChemicalOrderSheet Debug")
+        
+        # Log first few chemicals for debugging
+        if chemicals:
+            sample_chemicals = chemicals[:5]  # First 5 chemicals
+            frappe.log_error(f"Sample chemicals: {sample_chemicals}", "ChemicalOrderSheet Debug")
         
         return chemicals
-    
+        
     except Exception as e:
-        frappe.log_error(f"Error fetching chemicals: {str(e)}", "ChemicalOrderSheet")
+        error_msg = f"Error in get_all_chemicals: {str(e)}"
+        frappe.log_error(error_msg, "ChemicalOrderSheet Debug")
+        # Also log to console if running in development
+        print(error_msg)
         return []
+
+
+@frappe.whitelist()
+def get_all_chemicals_with_custom_fields():
+    """Get all chemicals with custom fields - separate method for testing"""
+    try:
+        frappe.log_error("get_all_chemicals_with_custom_fields called", "ChemicalOrderSheet Debug")
+        
+        # Check which custom fields exist
+        meta = frappe.get_meta("Item")
+        available_fields = ["name", "item_name"]
+        
+        custom_fields = [
+            "custom_application_rate_per_ha", 
+            "custom_advised_no_sprays", 
+            "custom_no_of_sprays"
+        ]
+        
+        existing_custom_fields = []
+        for field in custom_fields:
+            if meta.has_field(field):
+                available_fields.append(field)
+                existing_custom_fields.append(field)
+        
+        frappe.log_error(f"Available custom fields: {existing_custom_fields}", "ChemicalOrderSheet Debug")
+        
+        chemicals = frappe.get_all("Item", 
+            filters={
+                "item_group": "Chemical",
+                "disabled": 0
+            },  
+            fields=available_fields
+        )
+        
+        frappe.log_error(f"Found {len(chemicals)} chemicals with custom fields", "ChemicalOrderSheet Debug")
+        return chemicals
+        
+    except Exception as e:
+        error_msg = f"Error in get_all_chemicals_with_custom_fields: {str(e)}"
+        frappe.log_error(error_msg, "ChemicalOrderSheet Debug")
+        return []
+
+
+@frappe.whitelist()
+def debug_chemical_count():
+    """Debug helper to check chemical counts"""
+    try:
+        # Count all items
+        total_items = frappe.db.count("Item")
+        
+        # Count chemical items
+        chemical_items = frappe.db.count("Item", {"item_group": "Chemical"})
+        
+        # Count enabled chemical items
+        enabled_chemical_items = frappe.db.count("Item", {
+            "item_group": "Chemical", 
+            "disabled": 0
+        })
+        
+        # Check if Chemical item group exists
+        chemical_group_exists = frappe.db.exists("Item Group", "Chemical")
+        
+        result = {
+            "total_items": total_items,
+            "chemical_items": chemical_items,
+            "enabled_chemical_items": enabled_chemical_items,
+            "chemical_group_exists": chemical_group_exists
+        }
+        
+        frappe.log_error(f"Debug counts: {result}", "ChemicalOrderSheet Debug")
+        return result
+        
+    except Exception as e:
+        error_msg = f"Error in debug_chemical_count: {str(e)}"
+        frappe.log_error(error_msg, "ChemicalOrderSheet Debug")
+        return {"error": error_msg}
+
 
 @frappe.whitelist()
 def get_item_stock(item_code):
-    """Get current stock of an item across all warehouses"""
     try:
+        if not frappe.db.exists("Item", item_code):
+            return 0
+
         stock_qty = frappe.db.sql("""
             SELECT SUM(actual_qty) as qty
             FROM `tabBin`
             WHERE item_code = %s
-        """, (item_code), as_dict=1)
-        
+        """, (item_code,), as_dict=1)  
+
         return float(stock_qty[0].qty) if stock_qty and stock_qty[0].qty else 0
-    
     except Exception as e:
-        frappe.log_error(f"Error fetching stock for item {item_code}: {str(e)}", "ChemicalOrderSheet")
+        frappe.log_error(f"Error fetching stock for {item_code}: {str(e)}", "ChemicalOrderSheet")
         return 0
+
 
 @frappe.whitelist()
 def calculate_order_quantities(doc):
-    """Calculate order quantities based on farm areas, application rate, and spray count"""
     try:
         if isinstance(doc, str):
             doc = json.loads(doc)
-        
+
         if not doc.get('farm_area_to_spray') or not doc.get('spray_details'):
             return []
-        
+
         order_details = []
-        
-        # Process each chemical from spray details
+
         for spray in doc.get('spray_details'):
             if not spray.get('chemical') or not spray.get('application_rate_per_hectare') or not spray.get('number_of_sprays'):
                 continue
-            
-            # Get item details
-            item_name = frappe.get_value("Item", spray.get('chemical'), "item_name")
-            if not item_name:
-                frappe.logger().warning(f"Item {spray.get('chemical')} not found")
+
+            item_code = spray.get('chemical')
+            if not frappe.db.exists("Item", item_code):
                 continue
-                
-            # Create new order detail row
+
+            item_name = frappe.db.get_value("Item", item_code, "item_name") or item_code
+
             order_row = {
-                "item": spray.get('chemical'),
+                "item": item_code,
                 "item_name": item_name,
-                "tima_1": 0,
-                "tima_2": 0,
-                "tima_3": 0,
-                "tima_4": 0,
-                "tima_5": 0,
-                "tima_6": 0,
-                "tima_7": 0,
-                "jangwani": 0
+                "tima_1": 0, "tima_2": 0, "tima_3": 0, "tima_4": 0,
+                "tima_5": 0, "tima_6": 0, "tima_7": 0, "jangwani": 0
             }
-            
-            # Calculate for each farm area
+
             for area in doc.get('farm_area_to_spray'):
-                # Calculate required quantity for each area
-                # Formula: Area size * Application Rate * Number of Sprays
-                for field in ["tima_1", "tima_2", "tima_3", "tima_4", "tima_5", "tima_6", "tima_7", "jangwani"]:
-                    if area.get(field):
-                        try:
-                            # Ensure all values are properly converted to float
-                            area_size = float(area.get(field) or 0)
-                            app_rate = float(spray.get('application_rate_per_hectare') or 0)
-                            spray_count = float(spray.get('number_of_sprays') or 0)
-                            
-                            order_row[field] = area_size * app_rate * spray_count
-                        except (ValueError, TypeError) as e:
-                            frappe.logger().warning(f"Error calculating {field}: {str(e)}")
-                            order_row[field] = 0
-            
-            # Get current stock
-            current_stock = get_item_stock(spray.get('chemical'))
-            
-            if current_stock > 0:
-                for field in ["tima_1", "tima_2", "tima_3", "tima_4", "tima_5", "tima_6", "tima_7", "jangwani"]:
-                    if order_row[field] > 0:
-                        if current_stock >= order_row[field]:
-                            current_stock -= order_row[field]
-                            order_row[field] = 0
-                        else:
-                            order_row[field] -= current_stock
-                            current_stock = 0
-                    
-                    if current_stock <= 0:
-                        break
-            
+                for field in order_row.keys():
+                    if field in ["item", "item_name"]:
+                        continue
+                    try:
+                        area_size = float(area.get(field) or 0)
+                        app_rate = float(spray.get('application_rate_per_hectare') or 0)
+                        spray_count = float(spray.get('number_of_sprays') or 0)
+                        order_row[field] += area_size * app_rate * spray_count
+                    except Exception as e:
+                        frappe.log_error(f"Calc error {field} for {item_code}: {str(e)}", "ChemicalOrderSheet")
+
+            current_stock = get_item_stock(item_code)
+            for field in order_row.keys():
+                if field in ["item", "item_name"]:
+                    continue
+                if order_row[field] > 0:
+                    if current_stock >= order_row[field]:
+                        current_stock -= order_row[field]
+                        order_row[field] = 0
+                    else:
+                        order_row[field] -= current_stock
+                        current_stock = 0
+                if current_stock <= 0:
+                    break
+
             order_details.append(order_row)
-        
+
         return order_details
-    
+
     except Exception as e:
-        frappe.log_error(f"Error calculating order quantities: {str(e)}", "ChemicalOrderSheet")
+        frappe.log_error(f"Error in calc_order_quantities: {str(e)}", "ChemicalOrderSheet")
         return []
