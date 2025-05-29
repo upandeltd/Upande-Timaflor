@@ -102,13 +102,16 @@ frappe.ui.form.on("Material Request", {
                 () => frm.events.get_items_from_bom(frm),
                 __("Get Items From")
             );
-        }
 
-        // Add the new Material Request button here
-        if (frm.doc.docstatus === 0) {
             frm.add_custom_button(
-                __("Material Request (Transfer)"), // Custom button label
-                () => frm.events.get_items_from_material_request_transfer(frm), // New event handler
+                __("Material Request (Transfer)"),
+                () => frm.events.get_items_from_material_request_transfer(frm),
+                __("Get Items From")
+            );
+
+            frm.add_custom_button(
+                __("Sales Order"),
+                () => frm.events.get_items_from_sales_order(frm),
                 __("Get Items From")
             );
         }
@@ -174,9 +177,7 @@ frappe.ui.form.on("Material Request", {
                         () => frm.events.make_request_for_quotation(frm),
                         __("Create")
                     );
-                }
 
-                if (frm.doc.material_request_type === "Purchase") {
                     frm.add_custom_button(
                         __("Supplier Quotation"),
                         () => frm.events.make_supplier_quotation(frm),
@@ -194,14 +195,6 @@ frappe.ui.form.on("Material Request", {
 
                 frm.page.set_inner_btn_group_as_primary(__("Create"));
             }
-        }
-
-        if (frm.doc.docstatus === 0) {
-            frm.add_custom_button(
-                __("Sales Order"),
-                () => frm.events.get_items_from_sales_order(frm),
-                __("Get Items From")
-            );
         }
 
         if (frm.doc.docstatus == 1 && frm.doc.status == "Stopped") {
@@ -239,22 +232,20 @@ frappe.ui.form.on("Material Request", {
         });
     },
 
-    // New event handler for fetching material requests of purpose "Material Transfer"
     get_items_from_material_request_transfer: function (frm) {
         erpnext.utils.map_current_doc({
-            method: "erpnext.stock.doctype.material_request.material_request.make_material_request", // Reusing the existing method, or you can create a new one if complex logic is needed
+            method: "upande_timaflor.utils.make_material_request",
             source_doctype: "Material Request",
             target: frm,
             setters: {
-                // You can set default values here if needed, e.g., company
                 company: frm.doc.company || undefined,
-                material_request_type: "Material Transfer", // Ensure the type is set for consistency
+                material_request_type: "Material Transfer",
             },
             get_query_filters: {
-                docstatus: 1, // Only submitted Material Requests
-                status: ["not in", ["Stopped", "Closed"]], // Only pending (not stopped or closed)
-                material_request_type: "Material Transfer", // Filter by purpose "Material Transfer"
-                per_ordered: ["<", 99.99], // Only requests that are not fully ordered
+                docstatus: 1,
+                status: ["not in", ["Stopped", "Closed"]],
+                material_request_type: "Material Transfer",
+                per_ordered: ["<", 99.99],
                 company: frm.doc.company,
             },
         });
@@ -503,6 +494,7 @@ frappe.ui.form.on("Material Request", {
             },
         });
     },
+
     material_request_type: function (frm) {
         frm.toggle_reqd("customer", frm.doc.material_request_type == "Customer Provided");
 
