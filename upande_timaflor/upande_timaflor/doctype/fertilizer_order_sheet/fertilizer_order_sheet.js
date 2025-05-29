@@ -13,15 +13,6 @@ frappe.ui.form.on('Fertilizer Order Sheet', {
             calculate_order_quantities(frm);
         }).addClass('btn-info');
 
-        // Create RFQ & PO Buttons
-        frm.add_custom_button(__('Create RFQ'), function() {
-            create_request_for_quotation(frm);
-        }, __('Create'));
-
-        frm.add_custom_button(__('Create PO'), function() {
-            create_purchase_order(frm, false);
-        }, __('Create'));
-    },
 
         //frm.add_custom_button(__('Clean Up Data'), function() {
             //cleanup_consumption_data(frm);
@@ -33,7 +24,15 @@ frappe.ui.form.on('Fertilizer Order Sheet', {
         //frm.add_custom_button(__('Validate Setup'), function() {validate_setup(frm); }, __('Debug'));
 
         //frm.add_custom_button(__('Debug Consumption'), function() {debug_consumption_table(frm);}, __('Debug'));
+        frm.add_custom_button(__('Create RFQ'), function() {
+            create_request_for_quotation(frm);
+        }, __('Create'));
+
+        frm.add_custom_button(__('Create PO'), function() {
+            create_purchase_order(frm);
+        }, __('Create'));
     },
+    
 
     average_consumption: function(frm) {
         update_consumption_for_all_rows(frm);
@@ -43,6 +42,145 @@ frappe.ui.form.on('Fertilizer Order Sheet', {
         update_stock_wanted_for_all_rows(frm);
     }
 });
+
+function create_request_for_quotation(frm) {
+    if (!frm.doc.order_quantity || frm.doc.order_quantity.length === 0) {
+        frappe.msgprint(__('Please calculate order quantities first.'));
+        return;
+    }
+
+    let items_to_order = [];
+
+    frm.doc.order_quantity.forEach(item => {
+        if (item.calculated_order_quantity > 0) {
+            items_to_order.push({
+                item_code: item.item,
+                item_name: item.item_name || item.item,
+                qty: item.calculated_order_quantity,
+                schedule_date: frappe.datetime.add_days(frappe.datetime.nowdate(), 7)
+            });
+        }
+    });
+
+    if (items_to_order.length === 0) {
+        frappe.msgprint(__('No items with quantities to order.'));
+        return;
+    }
+
+    frappe.model.with_doctype('Request for Quotation', function() {
+        let rfq = frappe.model.get_new_doc('Request for Quotation');
+        rfq.transaction_date = frappe.datetime.nowdate();
+        rfq.fertilizer_order_sheet = frm.doc.name;
+
+        items_to_order.forEach(item => {
+            let rfq_item = frappe.model.add_child(rfq, 'items');
+            rfq_item.item_code = item.item_code;
+            rfq_item.item_name = item.item_name;
+            rfq_item.qty = item.qty;
+            rfq_item.schedule_date = item.schedule_date;
+        });
+
+        frappe.set_route('Form', rfq.doctype, rfq.name);
+    });
+}
+
+function create_purchase_order(frm) {
+    if (!frm.doc.order_quantity || frm.doc.order_quantity.length === 0) {
+        frappe.msgprint(__('Please calculate order quantities first.'));
+        return;
+    }
+
+    let items_to_order = [];
+
+    frm.doc.order_quantity.forEach(item => {
+        if (item.calculated_order_quantity > 0) {
+            items_to_order.push({
+                item_code: item.item,
+                item_name: item.item_name || item.item,
+                qty: item.calculated_order_quantity,
+                schedule_date: frappe.datetime.add_days(frappe.datetime.nowdate(), 7)
+            });
+        }
+    });
+
+    if (items_to_order.length === 0) {
+        frappe.msgprint(__('No items with quantities to order.'));
+        return;
+    }
+
+    let d = new frappe.ui.Dialog({
+        title: __('Create Purchase Order'),
+        fields: [
+            {
+                label: __('Supplier'),
+                fieldname: 'supplier',
+                fieldtype: 'Link',
+                options: 'Supplier',
+                reqd: 1
+            },
+            {
+                label: __('Submit PO'),
+                fieldname: 'submit_po',
+                fieldtype: 'Check',
+                default: 0,
+                description: __('Submit the purchase order immediately after creation')
+            }
+        ],
+        primary_action_label: __('Create'),
+        primary_action(values) {
+            create_po_with_items(frm, items_to_order, values.supplier, values.submit_po);
+            d.hide();
+        }
+    });
+    d.show();
+}
+
+function create_po_with_items(frm, items_to_order, supplier, submit_po = false) {
+    frappe.model.with_doctype('Purchase Order', function() {
+        let po = frappe.model.get_new_doc('Purchase Order');
+        po.supplier = supplier;
+        po.transaction_date = frappe.datetime.nowdate();
+        po.fertilizer_order_sheet = frm.doc.name;
+
+        items_to_order.forEach(item => {
+            let po_item = frappe.model.add_child(po, 'items');
+            po_item.item_code = item.item_code;
+            po_item.item_name = item.item_name;
+            po_item.qty = item.qty;
+            po_item.schedule_date = item.schedule_date;
+        });
+
+        frappe.set_route('Form', po.doctype, po.name);
+        
+        if (submit_po) {
+            frappe.call({
+                method: 'frappe.client.save',
+                args: {
+                    doc: po
+                },
+                callback: function(r) {
+                    if (!r.exc) {
+                        frappe.model.sync();
+                        frappe.call({
+                            method: 'frappe.client.submit',
+                            args: {
+                                doctype: 'Purchase Order',
+                                name: r.message.name
+                            },
+                            callback: function() {
+                                frappe.show_alert({
+                                    message: __('Purchase Order submitted successfully'),
+                                    indicator: 'green'
+                                });
+                                frm.reload_doc();
+                            }
+                        });
+                    }
+                }
+            });
+        }
+    });
+}
 
 function validate_setup(frm) {
     frappe.call({
