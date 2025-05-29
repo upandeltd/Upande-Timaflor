@@ -2,10 +2,22 @@
 // For license information, please see license.txt
 
 let farm_area_warning_shown = false;
+let item_stock_cache = {};
 
 frappe.ui.form.on('Chemical Order Sheet', {
     refresh: function(frm) {
-        // Add All Chemicals Button - WITH DEBUG
+        // Pre-fetch stock quantities for all chemicals
+        frappe.call({
+            method: 'upande_timaflor.upande_timaflor.doctype.chemical_order_sheet.chemical_order_sheet.get_stock_for_all_chemicals',
+            callback: function(r) {
+                if (r.message) {
+                    item_stock_cache = r.message;
+                    console.log("Stock cache loaded:", item_stock_cache);
+                }
+            }
+        });
+        
+        // Add All Chemicals Button
         frm.add_custom_button(__('Add All Chemicals'), function() {
             if (!frm.doc.farm_area_to_spray || frm.doc.farm_area_to_spray.length === 0) {
                 if (!farm_area_warning_shown) {
@@ -15,99 +27,37 @@ frappe.ui.form.on('Chemical Order Sheet', {
                 return;
             }
 
-            console.log("=== DEBUG: Starting Add All Chemicals ===");
-            console.log("Calling get_all_chemicals method...");
-
             frappe.call({
-                method: 'upande_timaflor.upande_timaflor.doctype.chemical_order_sheet.chemical_order_sheet.get_all_chemicals',
+                method: 'upande_timaflor.upande_timaflor.doctype.chemical_order_sheet.chemical_order_sheet.get_all_chemicals_with_details',
                 freeze: true,
                 freeze_message: __('Fetching chemicals...'),
                 callback: function(r) {
-                    console.log("=== DEBUG: Method Response ===");
-                    console.log("Full response object:", r);
-                    console.log("Response message:", r.message);
-                    console.log("Message type:", typeof r.message);
-                    console.log("Message length:", r.message ? r.message.length : 'null/undefined');
-                    console.log("Is array?", Array.isArray(r.message));
-                    
                     if (r.message && r.message.length > 0) {
-                        console.log("SUCCESS: Chemicals found:", r.message.length);
-                        console.log("First few chemicals:", r.message.slice(0, 5));
-                        
                         frappe.confirm(
                             __('This will replace your current chemicals list. Continue?'),
                             function() {
-                                console.log("User confirmed, adding chemicals...");
                                 frm.clear_table('spray_details');
                                 
-                                let added_count = 0;
-                                r.message.forEach(function(item, index) {
-                                    try {
-                                        console.log(`Adding chemical ${index + 1}:`, item);
-                                        let row = frm.add_child('spray_details');
-                                        row.chemical = item.name;
-                                        row.application_rate_per_hectare = 1;
-                                        row.required_number_of_sprays = 1;
-                                        row.number_of_sprays = 1;
-                                        added_count++;
-                                    } catch (e) {
-                                        console.error("Error adding chemical:", item.name, e);
-                                    }
+                                r.message.forEach(chem => {
+                                    let row = frm.add_child('spray_details');
+                                    row.chemical = chem.name;
+                                    row.chemical_name = chem.item_name;
+                                    row.application_rate_per_hectare = chem.application_rate || 0;
+                                    row.required_number_of_sprays = chem.required_sprays || 0;
+                                    row.number_of_sprays = chem.number_of_sprays || chem.required_sprays || 0;
                                 });
                                 
-                                console.log(`Successfully added ${added_count} chemicals`);
                                 frm.refresh_field('spray_details');
-                                frappe.show_alert(__('Added ' + added_count + ' chemicals to the list'));
+                                frappe.show_alert(__('Added ' + r.message.length + ' chemicals to the list'));
                                 setTimeout(() => frm.trigger('calculate_orders'), 500);
                             }
                         );
                     } else {
-                        console.log("PROBLEM: No chemicals returned");
-                        console.log("Testing direct database query...");
-                        
-                        // Test with direct frappe.client.get_list
-                        frappe.call({
-                            method: 'frappe.client.get_list',
-                            args: {
-                                doctype: 'Item',
-                                filters: {'item_group': 'Chemical'},
-                                fields: ['name', 'item_name'],
-                                limit_page_length: 10
-                            },
-                            callback: function(test_r) {
-                                console.log("=== DEBUG: Direct Query Test ===");
-                                console.log("Direct query result:", test_r);
-                                
-                                if (test_r.message && test_r.message.length > 0) {
-                                    frappe.msgprint({
-                                        title: __('Debug Info'),
-                                        message: __('Found chemicals via direct query but not via custom method. Custom method may have an error. Check console logs and server error logs.'),
-                                        indicator: 'orange'
-                                    });
-                                } else {
-                                    frappe.msgprint({
-                                        title: __('Debug Info'),
-                                        message: __('No chemicals found even with direct query. Check if items are actually assigned to Chemical item group and are enabled.'),
-                                        indicator: 'red'
-                                    });
-                                }
-                            },
-                            error: function(test_err) {
-                                console.log("Direct query error:", test_err);
-                            }
-                        });
-                        
                         frappe.msgprint(__('No chemicals found in the system.'));
                     }
                 },
                 error: function(r) {
-                    console.log("=== DEBUG: Method Error ===");
-                    console.error("Error calling get_all_chemicals:", r);
-                    frappe.msgprint({
-                        title: __('Error'),
-                        message: __('Error calling get_all_chemicals method. Check console and server logs for details.'),
-                        indicator: 'red'
-                    });
+                    frappe.msgprint(__('Error fetching chemicals. Please try again.'));
                 }
             });
         });
@@ -142,15 +92,18 @@ frappe.ui.form.on('Chemical Order Sheet', {
 
     calculate_orders: function(frm) {
         if (frm.doc.farm_area_to_spray?.length > 0 && frm.doc.spray_details?.length > 0) {
-            if (!frm.calculate_without_popup) frappe.show_progress(__('Calculating Orders'), 0, 100);
+            frappe.show_progress(__('Calculating Orders'), 0, 100);
 
             frappe.call({
                 method: 'upande_timaflor.upande_timaflor.doctype.chemical_order_sheet.chemical_order_sheet.calculate_order_quantities',
-                args: { doc: frm.doc },
-                freeze: !frm.calculate_without_popup,
+                args: { 
+                    doc: frm.doc,
+                    stock_data: item_stock_cache
+                },
+                freeze: true,
                 freeze_message: __('Calculating order quantities...'),
                 callback: function(r) {
-                    if (!frm.calculate_without_popup) frappe.hide_progress();
+                    frappe.hide_progress();
 
                     if (r.message) {
                         frm.clear_table('order_detail');
@@ -164,22 +117,17 @@ frappe.ui.form.on('Chemical Order Sheet', {
                         });
                         frm.refresh_field('order_detail');
                         frm.trigger('calculate_totals');
-
-                        if (!frm.calculate_without_popup)
-                            frappe.show_alert(__('Order quantities calculated'));
-                    } else if (!frm.calculate_without_popup) {
+                        frappe.show_alert(__('Order quantities calculated'));
+                    } else {
                         frappe.msgprint(__('No order details were calculated. Check your data and try again.'));
                     }
                 },
                 error: function(r) {
-                    if (!frm.calculate_without_popup) {
-                        frappe.hide_progress();
-                        console.error("Error in calculate_orders:", r);
-                        frappe.msgprint(__('An error occurred while calculating order quantities.'));
-                    }
+                    frappe.hide_progress();
+                    frappe.msgprint(__('An error occurred while calculating order quantities.'));
                 }
             });
-        } else if (!frm.calculate_without_popup) {
+        } else {
             frappe.msgprint(__('Please add farm areas and chemicals before calculating'));
         }
     },
@@ -192,10 +140,10 @@ frappe.ui.form.on('Chemical Order Sheet', {
             frm.doc.order_detail.forEach(item => {
                 if (!item.item) return;
 
-                let qty = ['tima_1','tima_2','tima_3','tima_4','tima_5','tima_6','tima_7','jangwani']
+                let total_qty = ['tima_1','tima_2','tima_3','tima_4','tima_5','tima_6','tima_7','jangwani']
                     .map(f => parseFloat(item[f] || 0)).reduce((a, b) => a + b, 0);
 
-                if (qty > 0) {
+                if (total_qty > 0) {
                     promises.push(new Promise(resolve => {
                         frappe.call({
                             method: 'frappe.client.get_value',
@@ -205,10 +153,9 @@ frappe.ui.form.on('Chemical Order Sheet', {
                                 fieldname: 'valuation_rate'
                             },
                             callback: function(r) {
-                                resolve(r.message?.valuation_rate ? qty * r.message.valuation_rate : 0);
+                                resolve(r.message?.valuation_rate ? total_qty * r.message.valuation_rate : 0);
                             },
                             error: function() {
-                                console.warn(`Error fetching valuation rate for item: ${item.item}`);
                                 resolve(0);
                             }
                         });
@@ -225,6 +172,78 @@ frappe.ui.form.on('Chemical Order Sheet', {
         }
     }
 });
+
+// Handle changes to spray details
+frappe.ui.form.on('Spray Details', {
+    chemical: function(frm, cdt, cdn) {
+        let row = locals[cdt][cdn];
+        if (row.chemical) {
+            frappe.call({
+                method: 'upande_timaflor.upande_timaflor.doctype.chemical_order_sheet.chemical_order_sheet.get_chemical_details',
+                args: { item_code: row.chemical },
+                callback: function(r) {
+                    if (r.message) {
+                        frappe.model.set_value(cdt, cdn, 'chemical_name', r.message.item_name);
+                        frappe.model.set_value(cdt, cdn, 'application_rate_per_hectare', r.message.application_rate || 0);
+                        frappe.model.set_value(cdt, cdn, 'required_number_of_sprays', r.message.required_sprays || 0);
+                        frappe.model.set_value(cdt, cdn, 'number_of_sprays', r.message.number_of_sprays || r.message.required_sprays || 0);
+                        frm.refresh_field('spray_details');
+                        
+                        // Auto-calculate
+                        setTimeout(() => {
+                            if (frm.doc.farm_area_to_spray?.length > 0) {
+                                frm.trigger('calculate_orders');
+                            }
+                        }, 500);
+                    }
+                }
+            });
+        }
+    },
+    
+    application_rate_per_hectare: function(frm, cdt, cdn) {
+        setTimeout(() => {
+            if (frm.doc.farm_area_to_spray?.length > 0) {
+                frm.trigger('calculate_orders');
+            }
+        }, 500);
+    },
+    
+    number_of_sprays: function(frm, cdt, cdn) {
+        setTimeout(() => {
+            if (frm.doc.farm_area_to_spray?.length > 0) {
+                frm.trigger('calculate_orders');
+            }
+        }, 500);
+    }
+});
+
+frappe.ui.form.on('Area To Spray', {
+    farm_area_to_spray_add: function(frm, cdt, cdn) {
+        setTimeout(() => {
+            if (frm.doc.spray_details?.length > 0) {
+                frm.trigger('calculate_orders');
+            }
+        }, 1000);
+    },
+    
+    tima_1: function(frm, cdt, cdn) { trigger_auto_calc(frm); },
+    tima_2: function(frm, cdt, cdn) { trigger_auto_calc(frm); },
+    tima_3: function(frm, cdt, cdn) { trigger_auto_calc(frm); },
+    tima_4: function(frm, cdt, cdn) { trigger_auto_calc(frm); },
+    tima_5: function(frm, cdt, cdn) { trigger_auto_calc(frm); },
+    tima_6: function(frm, cdt, cdn) { trigger_auto_calc(frm); },
+    tima_7: function(frm, cdt, cdn) { trigger_auto_calc(frm); },
+    jangwani: function(frm, cdt, cdn) { trigger_auto_calc(frm); }
+});
+
+function trigger_auto_calc(frm) {
+    setTimeout(() => {
+        if (frm.doc.spray_details?.length > 0 && frm.doc.farm_area_to_spray?.length > 0) {
+            frm.trigger('calculate_orders');
+        }
+    }, 500);
+}
 
 function create_request_for_quotation(frm) {
     if (!frm.doc.order_detail || frm.doc.order_detail.length === 0) {
@@ -337,38 +356,3 @@ function create_po_with_items(frm, items_to_order, supplier = null) {
         frappe.set_route('Form', po.doctype, po.name);
     });
 }
-
-frappe.ui.form.on('Area To Spray', {
-    farm_area_to_spray_add: function(frm, cdt, cdn) {
-        // Optional: Auto-trigger calculation when new row added
-        setTimeout(() => frm.trigger('calculate_orders'), 1000);
-    }
-});
-
-// DEBUG: Add a test button to directly test the method
-frappe.ui.form.on('Chemical Order Sheet', {
-    refresh: function(frm) {
-        // Add the existing buttons first (the code above handles this)
-        
-        // Add a debug test button
-        frm.add_custom_button(__('DEBUG: Test Method'), function() {
-            console.log("=== DEBUG: Testing get_all_chemicals method directly ===");
-            
-            frappe.call({
-                method: 'upande_timaflor.upande_timaflor.doctype.chemical_order_sheet.chemical_order_sheet.get_all_chemicals',
-                callback: function(r) {
-                    console.log("Direct method test result:", r);
-                    frappe.msgprint({
-                        title: 'Debug Test Result',
-                        message: `Found ${r.message ? r.message.length : 0} chemicals. Check console for details.`,
-                        indicator: r.message && r.message.length > 0 ? 'green' : 'red'
-                    });
-                },
-                error: function(err) {
-                    console.error("Direct method test error:", err);
-                    frappe.msgprint('Method call failed. Check console for error details.');
-                }
-            });
-        }, __('Debug'));
-    }
-});
