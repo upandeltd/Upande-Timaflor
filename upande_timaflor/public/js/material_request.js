@@ -240,25 +240,25 @@ frappe.ui.form.on("Material Request", {
     },
 
     // New event handler for fetching material requests of purpose "Material Transfer"
-    get_items_from_material_request_transfer: function (frm) {
-        erpnext.utils.map_current_doc({
-            method: "erpnext.stock.doctype.material_request.material_request.make_material_request", // Reusing the existing method, or you can create a new one if complex logic is needed
-            source_doctype: "Material Request",
-            target: frm,
-            setters: {
-                // You can set default values here if needed, e.g., company
-                company: frm.doc.company || undefined,
-                material_request_type: "Material Transfer", // Ensure the type is set for consistency
-            },
-            get_query_filters: {
-                docstatus: 1, // Only submitted Material Requests
-                status: ["not in", ["Stopped", "Closed"]], // Only pending (not stopped or closed)
-                material_request_type: "Material Transfer", // Filter by purpose "Material Transfer"
-                per_ordered: ["<", 99.99], // Only requests that are not fully ordered
-                company: frm.doc.company,
-            },
-        });
-    },
+    // get_items_from_material_request_transfer: function (frm) {
+    //     erpnext.utils.map_current_doc({
+    //         method: "erpnext.stock.doctype.material_request.material_request.make_material_request", // Reusing the existing method, or you can create a new one if complex logic is needed
+    //         source_doctype: "Material Request",
+    //         target: frm,
+    //         setters: {
+    //             // You can set default values here if needed, e.g., company
+    //             company: frm.doc.company || undefined,
+    //             material_request_type: "Material Transfer", // Ensure the type is set for consistency
+    //         },
+    //         get_query_filters: {
+    //             docstatus: 1, // Only submitted Material Requests
+    //             status: ["not in", ["Stopped", "Closed"]], // Only pending (not stopped or closed)
+    //             material_request_type: "Material Transfer", // Filter by purpose "Material Transfer"
+    //             per_ordered: ["<", 99.99], // Only requests that are not fully ordered
+    //             company: frm.doc.company,
+    //         },
+    //     });
+    // },
 
     get_item_data: function (frm, item, overwrite_warehouse = false) {
         if (item && !item.item_code) {
