@@ -289,6 +289,6 @@ fixtures = [
 # ---------------
 doc_events = {
     "BOM": {
-        "validate": "upande_timaflor.utils.validate_bom"
+        "validate": ["upande_timaflor.utils.validate_bom"]
     }
 }
