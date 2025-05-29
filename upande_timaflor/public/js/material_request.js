@@ -221,23 +221,23 @@ frappe.ui.form.on("Material Request", {
         });
     },
 
-    get_items_from_sales_order: function (frm) {
-        erpnext.utils.map_current_doc({
-            method: "erpnext.selling.doctype.sales_order.sales_order.make_material_request",
-            source_doctype: "Sales Order",
-            target: frm,
-            setters: {
-                customer: frm.doc.customer || undefined,
-                delivery_date: undefined,
-            },
-            get_query_filters: {
-                docstatus: 1,
-                status: ["not in", ["Closed", "On Hold"]],
-                per_delivered: ["<", 99.99],
-                company: frm.doc.company,
-            },
-        });
-    },
+    // get_items_from_sales_order: function (frm) {
+    //     erpnext.utils.map_current_doc({
+    //         method: "erpnext.selling.doctype.sales_order.sales_order.make_material_request",
+    //         source_doctype: "Sales Order",
+    //         target: frm,
+    //         setters: {
+    //             customer: frm.doc.customer || undefined,
+    //             delivery_date: undefined,
+    //         },
+    //         get_query_filters: {
+    //             docstatus: 1,
+    //             status: ["not in", ["Closed", "On Hold"]],
+    //             per_delivered: ["<", 99.99],
+    //             company: frm.doc.company,
+    //         },
+    //     });
+    // },
 
     // New event handler for fetching material requests of purpose "Material Transfer"
     // get_items_from_material_request_transfer: function (frm) {
