@@ -107,20 +107,7 @@ fixtures = [
            ]]
         ]
     },
-    {
-        "dt": "Workspace",
-        "filters": [
-            ["name", "in", [
-                "Production Manager Workspace",
-                "PM Manufacturing",
-                "PM Stock",
-                "Storekeeper Workspace",
-                "Stocks Workspace",
-                "Accounting Workspace",
-                "General Manager Home"
-            ]]
-        ]
-    },
+   
     {
 
         "dt": "DocType",
