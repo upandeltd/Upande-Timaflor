@@ -5,14 +5,8 @@ app_description = "ERPNext Implementation for Timaflor"
 app_email = "newton@upande.com"
 app_license = "mit"
 
-
-import frappe
-from frappe import _
-from frappe.utils import flt
-
 # Apps
 # ------------------
-
 # required_apps = []
 
 # Each item in the list will be shown as an app in the apps page
@@ -20,7 +14,7 @@ from frappe.utils import flt
 # 	{
 # 		"name": "upande_timaflor",
 # 		"logo": "/assets/upande_timaflor/logo.png",
-# 		"title": "Upande Timaflor",
+# 		"title": "Upande Timaflor", 
 # 		"route": "/upande_timaflor",
 # 		"has_permission": "upande_timaflor.api.permission.has_app_permission"
 # 	}
@@ -79,22 +73,28 @@ from frappe.utils import flt
 # ----------
 
 # add methods and filters to jinja environment
-# jinja = {
-# 	"methods": "upande_timaflor.utils.jinja_methods",
-# 	"filters": "upande_timaflor.utils.jinja_filters"
-# }
+jinja = {
+	"methods": "upande_timaflor.utils.jinja_methods",
+	"filters": "upande_timaflor.utils.jinja_filters"
+}
 
-# hooks.py
+# JS file to override ERPNext's material_request.js
+#app_include_js = {web": ["erpnext/public/js/material_request.js"]}
+
+doctype_js = {
+    "Material Request": "public/js/material_request.js"
+}
+
+# Fixtures
+# --------
 fixtures = [
     {
-
         "dt": "Server Script",
         "filters": [
             ["name", "in", [
                 "get_latest_biometric_log",
                 "add_biometric_data_after_submit"
             ]]
-
         ]
     },
     {
@@ -109,7 +109,6 @@ fixtures = [
     },
    
     {
-
         "dt": "DocType",
        "filters": [
             ["name", "in", [
@@ -124,13 +123,11 @@ fixtures = [
 
 # Installation
 # ------------
-
 # before_install = "upande_timaflor.install.before_install"
 # after_install = "upande_timaflor.install.after_install"
 
 # Uninstallation
 # ------------
-
 # before_uninstall = "upande_timaflor.uninstall.before_uninstall"
 # after_uninstall = "upande_timaflor.uninstall.after_uninstall"
 
@@ -138,7 +135,6 @@ fixtures = [
 # ------------------
 # To set up dependencies/integrations with other apps
 # Name of the app being installed is passed as an argument
-
 # before_app_install = "upande_timaflor.utils.before_app_install"
 # after_app_install = "upande_timaflor.utils.after_app_install"
 
@@ -146,20 +142,17 @@ fixtures = [
 # -------------------
 # To clean up dependencies/integrations with other apps
 # Name of the app being uninstalled is passed as an argument
-
 # before_app_uninstall = "upande_timaflor.utils.before_app_uninstall"
 # after_app_uninstall = "upande_timaflor.utils.after_app_uninstall"
 
 # Desk Notifications
 # ------------------
 # See frappe.core.notifications.get_notification_config
-
 # notification_config = "upande_timaflor.notifications.get_notification_config"
 
 # Permissions
 # -----------
 # Permissions evaluated in scripted ways
-
 # permission_query_conditions = {
 # 	"Event": "frappe.desk.doctype.event.event.get_permission_query_conditions",
 # }
@@ -171,26 +164,12 @@ fixtures = [
 # DocType Class
 # ---------------
 # Override standard doctype classes
-
 # override_doctype_class = {
 # 	"ToDo": "custom_app.overrides.CustomToDo"
 # }
 
-# Document Events
-# ---------------
-# Hook on document methods and events
-
-# doc_events = {
-# 	"*": {
-# 		"on_update": "method",
-# 		"on_cancel": "method",
-# 		"on_trash": "method"
-# 	}
-# }
-
 # Scheduled Tasks
 # ---------------
-
 # scheduler_events = {
 # 	"all": [
 # 		"upande_timaflor.tasks.all"
@@ -211,12 +190,10 @@ fixtures = [
 
 # Testing
 # -------
-
 # before_tests = "upande_timaflor.install.before_tests"
 
 # Overriding Methods
 # ------------------------------
-#
 # override_whitelisted_methods = {
 # 	"frappe.desk.doctype.event.event.get_events": "upande_timaflor.event.get_events"
 # }
@@ -229,12 +206,10 @@ fixtures = [
 # }
 
 # exempt linked doctypes from being automatically cancelled
-#
 # auto_cancel_exempted_doctypes = ["Auto Repeat"]
 
 # Ignore links to specified DocTypes when deleting documents
 # -----------------------------------------------------------
-
 # ignore_links_on_delete = ["Communication", "ToDo"]
 
 # Request Events
@@ -249,7 +224,6 @@ fixtures = [
 
 # User Data Protection
 # --------------------
-
 # user_data_fields = [
 # 	{
 # 		"doctype": "{doctype_1}",
@@ -273,7 +247,6 @@ fixtures = [
 
 # Authentication and authorization
 # --------------------------------
-
 # auth_hooks = [
 # 	"upande_timaflor.auth.validate"
 # ]
@@ -285,49 +258,10 @@ fixtures = [
 # 	"Logging DocType Name": 30  # days to retain logs
 # }
 
-
-
 # Document Events
+# ---------------
 doc_events = {
     "BOM": {
-        "validate": "upande_timaflor.hooks.validate_bom"
+        "validate": ["upande_timaflor.utils.validate_bom"]
     }
 }
-# BOM Validation Logic 
-def validate_bom(doc, method):
-    for item in doc.items:
-        if not item.item_code:
-            continue
-
-        rate_type = item.get("custom_application_rate_type")
-        
-        if rate_type == "Per Hectare":
-            validate_per_hectare(item)
-        elif rate_type == "Per 100L":
-            validate_per_100l(item)
-
-def validate_per_hectare(item):
-    if not item.get("custom_application_rate_per_ha"):
-        frappe.throw(_(f"Row {item.idx}: Application Rate (per ha) required for {item.item_code}"))
-    
-    if flt(item.custom_application_rate_per_ha) <= 0:
-        frappe.throw(_(f"Row {item.idx}: Application Rate must be > 0 for {item.item_code}"))
-    
-    if not item.get("custom_area_to_spray"):
-        frappe.throw(_(f"Row {item.idx}: Area to Spray required for {item.item_code}"))
-    
-    if item.get("custom_volume"):
-        frappe.throw(_(f"Row {item.idx}: Remove Water Volume for Per Hectare items"))
-
-def validate_per_100l(item):
-    if not item.get("custom_application_volume_per_10002000l"):
-        frappe.throw(_(f"Row {item.idx}: Application Volume (per 100L) required for {item.item_code}"))
-    
-    if flt(item.custom_application_volume_per_10002000l) <= 0:
-        frappe.throw(_(f"Row {item.idx}: Application Volume must be > 0 for {item.item_code}"))
-    
-    if not item.get("custom_volume"):
-        frappe.throw(_(f"Row {item.idx}: Water Volume required for {item.item_code}"))
-    
-    if item.get("custom_area_to_spray"):
-        frappe.throw(_(f"Row {item.idx}: Remove Area to Spray for Per 100L items"))
