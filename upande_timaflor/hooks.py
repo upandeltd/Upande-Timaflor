@@ -92,8 +92,7 @@ fixtures = [
         "dt": "Server Script",
         "filters": [
             ["name", "in", [
-                "get_latest_biometric_log",
-                "add_biometric_data_after_submit"
+                "get_latest_biometric_log"
             ]]
         ]
     },
@@ -103,7 +102,10 @@ fixtures = [
             ["name", "in", [
                 "Biometric Signature",
                 "Material Assigned To Employee",
-                "Biometric Script  Stock Entry"
+                "Biometric Script Stock Entry",
+                "Purchase Order Redirect",
+                "Material Request Redirect"
+
            ]]
         ]
     },

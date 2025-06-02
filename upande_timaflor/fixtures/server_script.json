@@ -9,7 +9,7 @@
   "doctype_event": "Before Insert",
   "enable_rate_limit": 0,
   "event_frequency": "All",
-  "modified": "2025-05-17 16:31:56.692307",
+  "modified": "2025-05-30 11:14:03.631684",
   "module": "Upande Timaflor",
   "name": "get_latest_biometric_log",
   "rate_limit_count": 5,
@@ -17,24 +17,5 @@
   "reference_doctype": null,
   "script": "time_threshold = frappe.utils.add_to_date(frappe.utils.now_datetime(), minutes=-0.5)\nlatest_log = frappe.get_all(\n    \"Biometric Log\", \n    filters={\"timestamp\": [\">\", time_threshold]}, \n    fields=[\"employee\", \"biometric_id\", \"timestamp\", \"employee_name\"], \n    order_by=\"timestamp desc\", \n    limit=1\n)\nif latest_log:\n    frappe.response['message'] = latest_log[0]\nelse:\n    frappe.response['message'] = {\"error\": \"Please place finger on the Biometric Device\"}",
   "script_type": "API"
- },
- {
-  "allow_guest": 0,
-  "api_method": null,
-  "cron_format": null,
-  "disabled": 1,
-  "docstatus": 0,
-  "doctype": "Server Script",
-  "doctype_event": "After Save",
-  "enable_rate_limit": 0,
-  "event_frequency": "All",
-  "modified": "2025-05-14 23:44:06.370600",
-  "module": "Upande Timaflor",
-  "name": "add_biometric_data_after_submit",
-  "rate_limit_count": 5,
-  "rate_limit_seconds": 86400,
-  "reference_doctype": "Material Request",
-  "script": "# Allow updating custom_biometric_data after submission\nif doc.docstatus == 1:  # If document is submitted\n    # Get the original document from the database\n    original_doc = frappe.get_doc(\"Material Request\", doc.name)\n    \n    # Only allow changes to the biometric data table\n    for field in doc.as_dict():\n        if field != \"custom_biometric_data\" and field in original_doc.as_dict():\n            if doc.get(field) != original_doc.get(field):\n                frappe.throw(f\"Cannot modify {field} after submission\")\n    \n    # Allow the biometric data changes\n    doc.flags.ignore_validate_update_after_submit = True",
-  "script_type": "DocType Event"
  }
 ]
