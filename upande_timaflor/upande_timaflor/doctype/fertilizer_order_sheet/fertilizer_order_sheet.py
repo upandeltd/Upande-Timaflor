@@ -26,22 +26,37 @@ def calculate_historical_consumption(weeks_to_calculate):
 
         fertilizer_item_codes = [item['name'] for item in fertilizer_items]
 
+        # Define the farm warehouses
+        farm_warehouses = [
+            'Fertilizer Store -T1 - T',
+            'Fertilizer Store -T2 - T', 
+            'Fertilizer Store -T3 - T',
+            'Fertilizer Store -T4 - T',
+            'Fertilizer Store -T5 - T',
+            'Fertilizer Store -T6 - T',
+            'Fertilizer Store -T7 - T',
+            'Jangwani Stores - TFL'
+        ]
+
         consumption_data = frappe.db.sql("""
             SELECT
                 item_code,
-                SUM(actual_qty) as total_consumed
-            FROM `tabStock Ledger Entry`
+                SUM(ABS(actual_qty)) as total_consumed
+            FROM `tabStock Ledger Entry` sle
             WHERE
                 item_code IN %(item_codes)s
                 AND posting_date BETWEEN %(from_date)s AND %(to_date)s
                 AND actual_qty < 0
                 AND is_cancelled = 0
+                AND warehouse IN %(warehouses)s
+                AND voucher_type = 'Stock Entry'
             GROUP BY
                 item_code
         """, {
             "item_codes": fertilizer_item_codes,
             "from_date": from_date,
-            "to_date": to_date
+            "to_date": to_date,
+            "warehouses": farm_warehouses
         }, as_dict=1)
 
         consumption_map = {

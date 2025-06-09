@@ -13,10 +13,9 @@ frappe.ui.form.on('Fertilizer Order Sheet', {
             calculate_order_quantities(frm);
         }).addClass('btn-info');
 
-
-        //frm.add_custom_button(__('Clean Up Data'), function() {
-            //cleanup_consumption_data(frm);
-        //}).addClass('btn-warning');
+        frm.add_custom_button(__('Clean Up Data'), function() {
+            cleanup_consumption_data(frm);
+        }).addClass('btn-warning');
 
         // Debug buttons
         //frm.add_custom_button(__('Debug Data'), function() {debug_fertilizer_data(frm); }, __('Debug'));
@@ -206,35 +205,47 @@ function validate_setup(frm) {
     });
 }
 
-function cleanup_consumption_data(frm) {
-    if (!frm.doc.name) {
-        frappe.msgprint('Please save the document first');
+async function cleanup_consumption_data(frm) {
+    if (!frm.doc.weekly_average_consumption || frm.doc.weekly_average_consumption.length === 0) {
+        frappe.msgprint(__('No data to clean up.'));
         return;
     }
-    
-    frappe.confirm(
-        'This will remove all invalid rows from the consumption table. Continue?',
-        function() {
-            frappe.call({
-                method: 'upande_timaflor.upande_timaflor.doctype.fertilizer_order_sheet.fertilizer_order_sheet.cleanup_consumption_table',
-                args: { docname: frm.doc.name },
-                freeze: true,
-                freeze_message: __('Cleaning up data...'),
-                callback: function(r) {
-                    if (r.message && !r.message.error) {
-                        frappe.show_alert(r.message.message, 'green');
-                        frm.reload_doc();
-                    } else {
-                        frappe.msgprint({
-                            title: __('Error'),
-                            indicator: 'red',
-                            message: r.message?.error || 'Cleanup failed'
-                        });
-                    }
-                }
+
+    let valid_rows = [];
+    let removed_count = 0;
+
+    // Filter out invalid rows (only check for item)
+    for (const row of frm.doc.weekly_average_consumption) {
+        if (row.item && row.item.trim() !== '') {
+            valid_rows.push({
+                item: row.item,
+                average_consumption: row.average_consumption || 0,
+                stock_wanted_weeks: row.stock_wanted_weeks || 0
             });
+        } else {
+            removed_count++;
         }
-    );
+    }
+
+    // Update the table with valid rows
+    frm.clear_table('weekly_average_consumption');
+    for (const row of valid_rows) {
+        let new_row = frm.add_child('weekly_average_consumption');
+        frappe.model.set_value(new_row.doctype, new_row.name, 'item', row.item);
+        frappe.model.set_value(new_row.doctype, new_row.name, 'average_consumption', row.average_consumption);
+        frappe.model.set_value(new_row.doctype, new_row.name, 'stock_wanted_weeks', row.stock_wanted_weeks);
+    }
+    frm.refresh_field('weekly_average_consumption');
+    if (valid_rows.length > 0) {
+        frm.save().then(() => {
+            frappe.show_alert({
+                message: __('Cleaned up data: {0} invalid rows removed').replace('{0}', removed_count),
+                indicator: 'green'
+            }, 5);
+        });
+    } else {
+        frappe.msgprint(__('No valid rows found after cleanup.'));
+    }
 }
 
 function debug_consumption_table(frm) {
@@ -314,27 +325,23 @@ function debug_fertilizer_data(frm) {
 }
 
 function calculate_and_populate_averages(frm) {
-    // The input for weeks is now read from the main 'average_consumption' field
-    let weeks = frm.doc.average_consumption;
-    
-    if (!weeks || weeks <= 0) {
-        frappe.msgprint({
-            title: __('Input Required'),
-            indicator: 'orange',
-            // The message now refers to the relabeled field
-            message: __('Please enter a valid number in the "Weeks for Avg. Calculation" field first.')
-        });
+    if (!frm.doc.name) {
+        frappe.msgprint(__('Please save the document first.'));
+        return;
+    }
+
+    if (!frm.doc.average_consumption || frm.doc.average_consumption <= 0) {
+        frappe.msgprint(__('Please enter a valid number of weeks for average calculation.'));
         return;
     }
 
     frappe.call({
         method: 'upande_timaflor.upande_timaflor.doctype.fertilizer_order_sheet.fertilizer_order_sheet.calculate_historical_consumption',
         args: {
-            // Pass the value to the python function
-            weeks_to_calculate: weeks
+            weeks_to_calculate: frm.doc.average_consumption
         },
         freeze: true,
-        freeze_message: __('Calculating historical averages for the last {0} weeks...', [weeks]),
+        freeze_message: __('Calculating historical consumption...'),
         callback: function(r) {
             if (r.message && !r.message.error) {
                 let data = r.message;
@@ -350,9 +357,9 @@ function calculate_and_populate_averages(frm) {
 
                 data.sort((a, b) => a.item_name.localeCompare(b.item_name)).forEach(item => {
                     let row = frm.add_child('weekly_average_consumption');
+                    // Ensure both item and item_name are set
                     row.item = item.item_code;
-                    row.item_name = item.item_name;
-                    // The calculated average is populated into the child table's 'average_consumption' field
+                    row.item_name = item.item_name || item.item_code;  // Fallback to item_code if item_name is missing
                     row.average_consumption = item.average_consumption;
                     row.stock_wanted_weeks = stock_wanted_weeks > 0 ? stock_wanted_weeks : 0;
                 });
@@ -521,36 +528,25 @@ function calculate_order_quantities(frm) {
     }
 
     // Check for invalid rows
-    let invalid_rows = consumption_data.filter(row => 
-        !row.item || !row.item_name || 
-        row.item.trim() === '' || row.item_name.trim() === ''
-    );
-    
+    let invalid_rows = frm.doc.weekly_average_consumption.filter(row => !row.item || row.item.trim() === '');
     if (invalid_rows.length > 0) {
-        frappe.msgprint({
-            title: __('Data Validation Error'),
-            indicator: 'red',
-            message: __('Found {0} rows with missing item names or codes. Please use "Clean Up Data" button to fix this.').replace('{0}', invalid_rows.length)
-        });
+        frappe.msgprint(__(`Found ${invalid_rows.length} rows with missing item codes. Please use 'Clean Up Data' button to fix this.`));
         return;
     }
-
-    // Proceed with calculation
-    calculate_order_quantities_after_validation(frm);
-}
-
-function calculate_order_quantities_after_validation(frm) {
-    let consumption_data = frm.doc.weekly_average_consumption || [];
-    let stock_data = frm.doc.stock_levels || [];
-    let main_avg_consumption = parseFloat(frm.doc.average_consumption) || 0;
-    let main_stock_wanted_weeks = parseFloat(frm.doc.stock_wanted_weeks) || 0;
 
     // Create stock lookup map
     let stock_map = {};
     stock_data.forEach(stock => {
-        stock_map[stock.item_code] = parseFloat(stock.total_stock) || 0;
-        stock_map[stock.item_name] = parseFloat(stock.total_stock) || 0;
-        stock_map[stock.item] = parseFloat(stock.total_stock) || 0;
+        stock_map[stock.item] = {
+            tima_1: flt(stock.tima_1) || 0,
+            tima_2: flt(stock.tima_2) || 0,
+            tima_3: flt(stock.tima_3) || 0,
+            tima_4: flt(stock.tima_4) || 0,
+            tima_5: flt(stock.tima_5) || 0,
+            tima_6: flt(stock.tima_6) || 0,
+            tima_7: flt(stock.tima_7) || 0,
+            jangwani: flt(stock.jangwani) || 0
+        };
     });
 
     // Clear and populate order quantity table
@@ -565,32 +561,36 @@ function calculate_order_quantities_after_validation(frm) {
     );
 
     valid_consumption.sort((a, b) => a.item_name.localeCompare(b.item_name)).forEach(consumption => {
-        let row_avg_consumption = parseFloat(consumption.average_consumption) || 0;
-        let row_stock_wanted_weeks = parseFloat(consumption.stock_wanted_weeks) || 0;
+        let row_avg_consumption = flt(consumption.average_consumption) || 0;
+        let row_stock_wanted_weeks = flt(consumption.stock_wanted_weeks) || 0;
         
         // Use row values if available, otherwise use main form values
-        let avg_consumption = row_avg_consumption > 0 ? row_avg_consumption : main_avg_consumption;
-        let stock_wanted_weeks = row_stock_wanted_weeks > 0 ? row_stock_wanted_weeks : main_stock_wanted_weeks;
+        let avg_consumption = row_avg_consumption > 0 ? row_avg_consumption : flt(frm.doc.average_consumption) || 0;
+        let stock_wanted_weeks = row_stock_wanted_weeks > 0 ? row_stock_wanted_weeks : flt(frm.doc.stock_wanted_weeks) || 0;
 
         if (avg_consumption > 0 && stock_wanted_weeks > 0) {
-            // Look up current stock using multiple keys
-            let current_stock = stock_map[consumption.item] || 
-                              stock_map[consumption.item_name] || 
-                              0;
+            let current_stock = stock_map[consumption.item] || {
+                tima_1: 0, tima_2: 0, tima_3: 0, tima_4: 0,
+                tima_5: 0, tima_6: 0, tima_7: 0, jangwani: 0
+            };
             
+            // Calculate required stock and order quantity for each farm
             let required_stock = avg_consumption * stock_wanted_weeks;
-            let order_qty = Math.ceil(Math.max(0, required_stock - current_stock));
             
             // Add to order quantity table
-            frm.add_child('order_quantity', {
-                item: consumption.item,  // Item code
-                item_name: consumption.item_name,  // Item name
-                current_stock: current_stock,
-                average_consumption_per_week: avg_consumption,
-                weeks_to_order_for: stock_wanted_weeks,
-                required_stock: required_stock,
-                calculated_order_quantity: order_qty
+            let order_row = frm.add_child('order_quantity', {
+                item: consumption.item,
+                item_name: consumption.item_name,
+                tima_1: Math.ceil(Math.max(0, required_stock - current_stock.tima_1)),
+                tima_2: Math.ceil(Math.max(0, required_stock - current_stock.tima_2)),
+                tima_3: Math.ceil(Math.max(0, required_stock - current_stock.tima_3)),
+                tima_4: Math.ceil(Math.max(0, required_stock - current_stock.tima_4)),
+                tima_5: Math.ceil(Math.max(0, required_stock - current_stock.tima_5)),
+                tima_6: Math.ceil(Math.max(0, required_stock - current_stock.tima_6)),
+                tima_7: Math.ceil(Math.max(0, required_stock - current_stock.tima_7)),
+                jangwani: Math.ceil(Math.max(0, required_stock - current_stock.jangwani))
             });
+            
             calculated_count++;
         } else {
             skipped_count++;

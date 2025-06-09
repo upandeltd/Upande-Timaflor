@@ -1,10 +1,10 @@
-//Material Request - Get Items From
-
+// Material Request - Get Items From
 // Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 // License: GNU General Public License v3. See license.txt
 
-// eslint-disable-next-line
 frappe.provide("erpnext.accounts.dimensions");
+frappe.provide("erpnext.buying");
+
 erpnext.buying.setup_buying_controller();
 
 frappe.ui.form.on("Material Request", {
@@ -85,6 +85,15 @@ frappe.ui.form.on("Material Request", {
     refresh: function (frm) {
         frm.events.make_custom_buttons(frm);
         frm.toggle_reqd("customer", frm.doc.material_request_type == "Customer Provided");
+
+        // Add "Create Filtered PO" button for submitted Purchase Material Requests
+        if (
+            frm.doc.docstatus === 1 &&
+            frm.doc.material_request_type === "Purchase" &&
+            frm.doc.status != "Stopped"
+        ) {
+            frm.add_custom_button(__("Create Filtered PO"), () => frm.events.create_filtered_purchase_order(frm), __("Create"));
+        }
     },
 
     set_from_warehouse: function (frm) {
@@ -107,8 +116,8 @@ frappe.ui.form.on("Material Request", {
         // Add the new Material Request button here
         if (frm.doc.docstatus === 0) {
             frm.add_custom_button(
-                __("Material Request (Transfer)"), // Custom button label
-                () => frm.events.get_items_from_material_request_transfer(frm), // New event handler
+                __("Material Request (Transfer)"),
+                () => frm.events.get_items_from_material_request_transfer(frm),
                 __("Get Items From")
             );
         }
@@ -221,44 +230,85 @@ frappe.ui.form.on("Material Request", {
         });
     },
 
-    // get_items_from_sales_order: function (frm) {
-    //     erpnext.utils.map_current_doc({
-    //         method: "erpnext.selling.doctype.sales_order.sales_order.make_material_request",
-    //         source_doctype: "Sales Order",
-    //         target: frm,
-    //         setters: {
-    //             customer: frm.doc.customer || undefined,
-    //             delivery_date: undefined,
-    //         },
-    //         get_query_filters: {
-    //             docstatus: 1,
-    //             status: ["not in", ["Closed", "On Hold"]],
-    //             per_delivered: ["<", 99.99],
-    //             company: frm.doc.company,
-    //         },
-    //     });
-    // },
+    create_filtered_purchase_order: function (frm) {
+        // Show a dialog to select items and supplier
+        const fields = [
+            {
+                fieldtype: 'Link',
+                fieldname: 'supplier',
+                label: __('Supplier'),
+                options: 'Supplier',
+                reqd: 1 // Make supplier mandatory
+            },
+            ...frm.doc.items.map(item => ({
+                fieldtype: 'Check',
+                fieldname: item.name,
+                label: `${item.item_code} - ${item.item_name} (${item.qty} ${item.uom})`,
+                default: !item.custom_po_created,
+                read_only: !!item.custom_po_created
+            }))
+        ];
 
-    // New event handler for fetching material requests of purpose "Material Transfer"
-    // get_items_from_material_request_transfer: function (frm) {
-    //     erpnext.utils.map_current_doc({
-    //         method: "erpnext.stock.doctype.material_request.material_request.make_material_request", // Reusing the existing method, or you can create a new one if complex logic is needed
-    //         source_doctype: "Material Request",
-    //         target: frm,
-    //         setters: {
-    //             // You can set default values here if needed, e.g., company
-    //             company: frm.doc.company || undefined,
-    //             material_request_type: "Material Transfer", // Ensure the type is set for consistency
-    //         },
-    //         get_query_filters: {
-    //             docstatus: 1, // Only submitted Material Requests
-    //             status: ["not in", ["Stopped", "Closed"]], // Only pending (not stopped or closed)
-    //             material_request_type: "Material Transfer", // Filter by purpose "Material Transfer"
-    //             per_ordered: ["<", 99.99], // Only requests that are not fully ordered
-    //             company: frm.doc.company,
-    //         },
-    //     });
-    // },
+        let d = new frappe.ui.Dialog({
+            title: __('Select Items and Supplier for Purchase Order'),
+            fields: fields,
+            primary_action_label: __('Create PO'),
+            primary_action(values) {
+                let selected_items = frm.doc.items.filter(item => values[item.name] && !item.custom_po_created);
+                if (selected_items.length === 0) {
+                    frappe.msgprint(__('Please select at least one item.'));
+                    return;
+                }
+
+                frappe.call({
+                    method: "frappe.client.insert",
+                    args: {
+                        doc: {
+                            doctype: "Purchase Order",
+                            supplier: values.supplier,
+                            schedule_date: frappe.datetime.nowdate(),
+                            company: frm.doc.company,
+                            items: selected_items.map((item) => ({
+                                item_code: item.item_code,
+                                qty: item.qty,
+                                rate: item.rate || 0,
+                                material_request: frm.doc.name,
+                                material_request_item: item.name,
+                            })),
+                        },
+                    },
+                    callback(r) {
+                        if (!r.exc) {
+                            // Mark items as used in PO
+                            frappe.call({
+                                method: "upande_timaflor.api.mark_items_po_created",
+                                args: {
+                                    item_names: selected_items.map(i => i.name)
+                                },
+                                callback: function(response) {
+                                    if (!response.exc) {
+                                        frm.reload_doc();
+                                        frappe.set_route("Form", "Purchase Order", r.message.name);
+                                    } else {
+                                        frappe.msgprint(__('Error marking items as PO created: ') + response.exc);
+                                    }
+                                },
+                                error: function(err) {
+                                    frappe.msgprint(__('Failed to call mark_items_po_created: ') + err.message);
+                                }
+                            });
+                        } else {
+                            frappe.msgprint(__('Error creating Purchase Order: ') + r.exc);
+                        }
+                    },
+                });
+
+                d.hide();
+            }
+        });
+
+        d.show();
+    },
 
     get_item_data: function (frm, item, overwrite_warehouse = false) {
         if (item && !item.item_code) {
@@ -503,6 +553,7 @@ frappe.ui.form.on("Material Request", {
             },
         });
     },
+
     material_request_type: function (frm) {
         frm.toggle_reqd("customer", frm.doc.material_request_type == "Customer Provided");
 
