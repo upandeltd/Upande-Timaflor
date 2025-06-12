@@ -9,7 +9,7 @@
   "doctype_event": "Before Insert",
   "enable_rate_limit": 0,
   "event_frequency": "All",
-  "modified": "2025-05-30 11:14:03.631684",
+  "modified": "2025-06-10 10:03:49.976291",
   "module": "Upande Timaflor",
   "name": "get_latest_biometric_log",
   "rate_limit_count": 5,
