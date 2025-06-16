@@ -109,6 +109,21 @@ fixtures = [
            ]]
         ]
     },
+
+    {
+        "dt": "Workspace",
+        "filters": [
+            ["name", "in", [
+                "Accounting Workspace",
+
+           ]]
+        ]
+    },
+    # Preserve custom role permissions
+       {
+        "doctype": "Custom DocPerm",
+        "filters": []  # This exports all custom doctype permissions
+    },
    
     {
         "dt": "DocType",
@@ -122,6 +137,7 @@ fixtures = [
         ]
     }
 ]
+
 
 # Installation
 # ------------
