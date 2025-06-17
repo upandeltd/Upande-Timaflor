@@ -91,20 +91,13 @@ fixtures = [
         "dt": "Server Script",
         "filters": [
             ["name", "in", [
-                "get_latest_biometric_log"
+            
+                "Witholding VAT on vatable items"
             ]]
 
         ]
     },
-    {
-        "dt": "Client Script",
-        "filters": [
-            ["name", "in", [
-                "Biometric Signature",
-                "Material Assigned To Employee"
-           ]]
-        ]
-    },
+    
     {
         "dt": "Workspace",
         "filters": [
@@ -118,35 +111,8 @@ fixtures = [
                 "General Manager Home"
             ]]
         ]
-    },
-    {
-
-        "dt": "DocType",
-       "filters": [
-            ["name", "in", [
-                "Biometric Log",
-                "Biometric Signature",
-                "Assigned To Material",
-                "Greenhouse",
-                "Ordering Sheet",
-                "Order Detail",
-                "Order Quantity",
-                "Daily Maximum Consumption",
-                "Daily Minimum Consumption",
-                "Fertilizer Order Sheet",
-                "Fertilizer Stock Levels",
-                "Chemical Stock Levels",
-                "Chemical Order Sheet",
-                "Chemical Order Quantity",
-                "Area To Spray",
-                "Chemical Sprays",
-                "Fertilizer Average Consumption",
-                "Stock Levels",
-                "Quantity To Order",
-                "Chemical Target"
-            ]]
-        ]
     }
+    
 ]
 
 # Installation
