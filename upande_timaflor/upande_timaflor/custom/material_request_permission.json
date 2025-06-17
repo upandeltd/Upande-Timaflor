@@ -1,4 +1,5 @@
 {
+ "doctype": "Material Request",
  "permissions": [
   {
    "creation": "2025-03-26 10:00:00.000000",
@@ -21,4 +22,4 @@
    "condition": "EXISTS(SELECT 1 FROM `tabWarehouse` w WHERE w.name = `tabMaterial Request`.set_warehouse AND w.farm IN (SELECT f.name FROM `tabFarm` f WHERE f.manager = '{user}'))"
   }
  ]
-} 
+}
