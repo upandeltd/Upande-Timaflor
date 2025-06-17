@@ -1,5 +1,7 @@
 [
  {
+    "type": "Module", 
+    
   "charts": [
    {
     "chart_name": "Profit and Loss",
