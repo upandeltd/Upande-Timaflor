@@ -120,6 +120,10 @@ fixtures = [
         ]
     },
     # Preserve custom role permissions
+    {
+    "dt": "Custom Role",
+    "filters": []
+},
        {
         "doctype": "Custom DocPerm",
         "filters": []  # This exports all custom doctype permissions
