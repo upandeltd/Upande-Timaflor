@@ -7,7 +7,7 @@ from frappe.utils import flt, nowdate, add_to_date
 def calculate_historical_consumption(weeks_to_calculate):
     """
     Calculates the average weekly consumption of fertilizer items based on historical
-    Stock Ledger Entries over a specified number of weeks.
+    Stock Ledger Entries over a specified number of weeks, broken down by farm/warehouse.
     """
     try:
         weeks = flt(weeks_to_calculate)
@@ -26,21 +26,23 @@ def calculate_historical_consumption(weeks_to_calculate):
 
         fertilizer_item_codes = [item['name'] for item in fertilizer_items]
 
-        # Define the farm warehouses
-        farm_warehouses = [
-            'Fertilizer Store -T1 - T',
-            'Fertilizer Store -T2 - T', 
-            'Fertilizer Store -T3 - T',
-            'Fertilizer Store -T4 - T',
-            'Fertilizer Store -T5 - T',
-            'Fertilizer Store -T6 - T',
-            'Fertilizer Store -T7 - T',
-            'Jangwani Stores - TFL'
-        ]
+        # Define the farm warehouses with their corresponding field names
+        warehouse_mapping = {
+            'Fertilizer Store -T1 - T': 'tima_1',
+            'Fertilizer Store -T2 - T': 'tima_2', 
+            'Fertilizer Store -T3 - T': 'tima_3',
+            'Fertilizer Store -T4 - T': 'tima_4',
+            'Fertilizer Store -T5 - T': 'tima_5',
+            'Fertilizer Store -T6 - T': 'tima_6',
+            'Fertilizer Store -T7 - T': 'tima_7',
+            'Jangwani Stores - TFL': 'jangwani'
+        }
 
+        # Get consumption data per warehouse
         consumption_data = frappe.db.sql("""
             SELECT
                 item_code,
+                warehouse,
                 SUM(ABS(actual_qty)) as total_consumed
             FROM `tabStock Ledger Entry` sle
             WHERE
@@ -51,27 +53,39 @@ def calculate_historical_consumption(weeks_to_calculate):
                 AND warehouse IN %(warehouses)s
                 AND voucher_type = 'Stock Entry'
             GROUP BY
-                item_code
+                item_code, warehouse
         """, {
             "item_codes": fertilizer_item_codes,
             "from_date": from_date,
             "to_date": to_date,
-            "warehouses": farm_warehouses
+            "warehouses": list(warehouse_mapping.keys())
         }, as_dict=1)
 
-        consumption_map = {
-            entry.item_code: abs(entry.total_consumed) for entry in consumption_data
-        }
+        # Create consumption map per item and warehouse
+        consumption_map = {}
+        for entry in consumption_data:
+            if entry.item_code not in consumption_map:
+                consumption_map[entry.item_code] = {}
+            warehouse_field = warehouse_mapping.get(entry.warehouse)
+            if warehouse_field:
+                consumption_map[entry.item_code][warehouse_field] = abs(entry.total_consumed)
 
         result = []
         for item in fertilizer_items:
-            total_consumed = flt(consumption_map.get(item['name'], 0))
-            average_consumption = flt(total_consumed / weeks, 2)
-
+            item_consumption = consumption_map.get(item['name'], {})
+            
+            # Calculate average consumption per week for each farm
             result.append({
                 "item_code": item['name'],
                 "item_name": item['item_name'] or item['name'],
-                "average_consumption": average_consumption
+                "tima_1": flt(item_consumption.get('tima_1', 0) / weeks, 2),
+                "tima_2": flt(item_consumption.get('tima_2', 0) / weeks, 2),
+                "tima_3": flt(item_consumption.get('tima_3', 0) / weeks, 2),
+                "tima_4": flt(item_consumption.get('tima_4', 0) / weeks, 2),
+                "tima_5": flt(item_consumption.get('tima_5', 0) / weeks, 2),
+                "tima_6": flt(item_consumption.get('tima_6', 0) / weeks, 2),
+                "tima_7": flt(item_consumption.get('tima_7', 0) / weeks, 2),
+                "jangwani": flt(item_consumption.get('jangwani', 0) / weeks, 2)
             })
 
         return result
