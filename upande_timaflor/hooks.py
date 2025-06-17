@@ -287,3 +287,6 @@ doc_events = {
         "validate": ["upande_timaflor.utils.validate_bom"]
     }
 }
+doctype_js = {
+    "Material Request": "public/js/material_request.js"
+}
