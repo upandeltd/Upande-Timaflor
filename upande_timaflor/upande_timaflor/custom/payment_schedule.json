@@ -82,15 +82,14 @@
    "field_name": null,
    "idx": 0,
    "is_system_generated": 0,
-<<<<<<< HEAD
-<<<<<<< HEAD
+
    "modified": "2025-06-09 14:29:57.942428",
-=======
+
    "modified": "2025-05-06 11:30:43.337614",
->>>>>>> Jeniffer
-=======
+
+
    "modified": "2025-06-09 14:29:57.942428",
->>>>>>> fa59d8d972870820c1d43b32b7cc02d49dc573ac
+
    "modified_by": "Administrator",
    "module": null,
    "name": "Payment Schedule-main-field_order",
