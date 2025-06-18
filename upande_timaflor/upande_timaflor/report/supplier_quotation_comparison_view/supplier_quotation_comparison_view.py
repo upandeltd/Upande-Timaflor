@@ -1,7 +1,7 @@
-import frappe
+import frappe # type: ignore
 import json
-from frappe.utils import nowdate
-from frappe import _
+from frappe.utils import nowdate # type: ignore
+from frappe import _ # type: ignore
 
 def execute(filters=None):
     """
