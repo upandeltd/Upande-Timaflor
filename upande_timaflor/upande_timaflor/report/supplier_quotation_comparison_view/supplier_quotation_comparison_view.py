@@ -11,20 +11,20 @@ def execute(filters=None):
         frappe.msgprint(_("Please select an RFQ to generate the report."), title=_("Missing RFQ"))
         return [], []
 
-    rfq_name = filters["rfq"]
-    
+    rfq_name = filters["rfq"] # This line and everything below it needs to be indented
+
     # Get company's default currency for display purposes
     company_currency = frappe.get_value("Company", frappe.defaults.get_user_default("Company"), "default_currency")
     if not company_currency:
         frappe.msgprint(_("Default company currency not found. Please set it up."), title=_("Configuration Error"))
         return [], []
 
-<<<<<<< HEAD
     rfq_items = get_rfq_items(rfq_name)
     if not rfq_items:
         frappe.msgprint(_("No items found in the selected Request for Quotation."), title=_("No Items"))
         return [], []
 
+    # This 'if' statement was also incorrectly indented, causing an issue
     supplier_list = get_rfq_suppliers(rfq_name)
     if not supplier_list:
         frappe.msgprint(_("No suppliers linked to the selected Request for Quotation."), title=_("No Suppliers"))
@@ -36,7 +36,7 @@ def execute(filters=None):
         return [], []
 
     columns, data = build_table_data(rfq_items, supplier_quotes, company_currency, rfq_name)
-    
+
     return columns, data
 
 def get_rfq_items(rfq_name):
@@ -44,17 +44,12 @@ def get_rfq_items(rfq_name):
     Fetches distinct items from the Request for Quotation.
     """
     return frappe.get_all(
-=======
-    # Get all items from the RFQ
-    rfq_items = frappe.get_all(
->>>>>>> fa59d8d972870820c1d43b32b7cc02d49dc573ac
         "Request for Quotation Item",
         filters={"parent": rfq_name},
         fields=["item_code", "item_name", "uom"],
         distinct=True
     )
 
-<<<<<<< HEAD
 def get_rfq_suppliers(rfq_name):
     """
     Fetches all suppliers linked to the Request for Quotation.
@@ -72,20 +67,13 @@ def get_supplier_quotes(supplier_list, rfq_name):
     """
     return frappe.db.sql("""
         SELECT
-
             sq.name AS quotation_name,
-=======
-    # Get Supplier Quotations linked to the RFQ
-    supplier_quotes = frappe.db.sql("""
-        SELECT 
->>>>>>> fa59d8d972870820c1d43b32b7cc02d49dc573ac
             sq.supplier,
             sqi.item_code,
             sqi.item_name,
             sqi.uom,
             sqi.qty,
             sqi.rate
-<<<<<<< HEAD
         FROM `tabSupplier Quotation` sq
         INNER JOIN `tabSupplier Quotation Item` sqi ON sq.name = sqi.parent
         WHERE sq.docstatus = 1 -- Only consider submitted quotations
@@ -115,8 +103,6 @@ def build_table_data(rfq_items, supplier_quotes, company_currency, rfq_name):
         {"label": _("UOM"), "fieldname": "uom", "fieldtype": "Data", "width": 80},
         {"label": _("ITEM CODE"), "fieldname": "item_code", "fieldtype": "Data", "width": 120},
         {"label": _("ITEM NAME"), "fieldname": "item_name", "fieldtype": "Data", "width": 260}
-        
-        
     ]
 
     for supplier in suppliers:
@@ -141,44 +127,12 @@ def build_table_data(rfq_items, supplier_quotes, company_currency, rfq_name):
             "qty": q.qty
         }
 
-=======
-        FROM 
-            `tabSupplier Quotation` sq
-        INNER JOIN 
-            `tabSupplier Quotation Item` sqi ON sq.name = sqi.parent
-        WHERE 
-            request_for_quotation = %s
-        ORDER BY 
-            sq.supplier
-    """, rfq_name, as_dict=True)
-
-    if not supplier_quotes:
-        frappe.msgprint("No supplier quotations found.")
-        return [], []
-
-    # Determine unique supplier list
-    suppliers = sorted(list({q["supplier"] for q in supplier_quotes}))
-    supplier_columns = [{"label": s, "fieldname": s, "fieldtype": "Currency"} for s in suppliers]
-
-    # Define columns
-    columns = [
-        {"label": "Item Code", "fieldname": "item_code", "fieldtype": "Data", "width": 150},
-        {"label": "Item Name", "fieldname": "item_name", "fieldtype": "Data", "width": 200},
-    ] + supplier_columns
-
-    # Map of (item_code, supplier) -> rate
-    rate_map = {(q["item_code"], q["supplier"]): q["rate"] for q in supplier_quotes}
-
-    # Build rows
->>>>>>> fa59d8d972870820c1d43b32b7cc02d49dc573ac
     data = []
     rfq_item_qty_map = {item.item_code: frappe.get_value("Request for Quotation Item", {"parent": rfq_name, "item_code": item.item_code}, "qty") for item in rfq_items}
-
 
     for item in rfq_items:
         row = {
             "item_code": item.item_code,
-<<<<<<< HEAD
             "item_name": item.item_name,
             "uom": item.uom,
             "rfq_qty": rfq_item_qty_map.get(item.item_code, 0)
@@ -224,12 +178,6 @@ def build_table_data(rfq_items, supplier_quotes, company_currency, rfq_name):
 
             row[sup] = f'{checkbox}<span style="color:{color};">{money_formatted}</span>'
 
-=======
-            "item_name": item.item_name
-        }
-        for supplier in suppliers:
-            row[supplier] = rate_map.get((item.item_code, supplier), None)
->>>>>>> fa59d8d972870820c1d43b32b7cc02d49dc573ac
         data.append(row)
 
     return columns, data
@@ -255,7 +203,7 @@ def check_for_duplicate_po(supplier, items_to_check):
 
     for po_doc_name in existing_pos:
         po_name = po_doc_name.name
-        
+
         # Get items for the existing Purchase Order
         existing_po_items = frappe.get_all(
             "Purchase Order Item",
@@ -296,7 +244,7 @@ def create_purchase_orders_from_rfq(selections):
 
     created_po_names = []
     errors = []
-    
+
     # Get the default company only once
     default_company = frappe.defaults.get_user_default("Company")
     if not default_company:
@@ -312,13 +260,13 @@ def create_purchase_orders_from_rfq(selections):
         try:
             po = frappe.new_doc("Purchase Order")
             po.supplier = supplier
-            
+
             # --- MANDATORY FIELD: company ---
-            po.company = default_company 
-            
+            po.company = default_company
+
             # Use currency from first item, fallback to company default
             po.currency = items[0].get("currency", frappe.get_value("Company", default_company, "default_currency"))
-            
+
             po.transaction_date = nowdate()
             po.schedule_date = nowdate()
 
@@ -331,18 +279,18 @@ def create_purchase_orders_from_rfq(selections):
                     "rate": float(item.get("rate", 0)),
                     "schedule_date": nowdate(),
                     # --- MANDATORY FIELD: uom_conversion_factor ---
-                    "uom_conversion_factor": 1.0, 
+                    "uom_conversion_factor": 1.0,
                     # "warehouse": "Your Default Warehouse" # Uncomment and set if mandatory in your setup
                 }
                 # Example for warehouse if mandatory:
                 # po_item["warehouse"] = frappe.get_value("Company", default_company, "default_warehouse")
 
                 po.append("items", po_item)
-            
+
             po.insert(ignore_permissions=True)
             po.submit()
             created_po_names.append(po.name)
-            
+
         except Exception as e:
             frappe.logger("rfq_comparison_report").error(f"Error creating PO for supplier {supplier}: {frappe.utils.get_traceback()}")
             errors.append(_("Failed to create PO for {0}: {1}").format(supplier, str(e)))
@@ -352,4 +300,3 @@ def create_purchase_orders_from_rfq(selections):
         frappe.throw(error_message, title=_("PO Creation Status"))
     else:
         return {"purchase_orders": created_po_names, "message": _("Purchase Orders created successfully.")}
-
