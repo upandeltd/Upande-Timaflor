@@ -6,9 +6,6 @@ app_email = "newton@upande.com"
 app_license = "mit"
 
 
-import frappe
-from frappe import _
-from frappe.utils import flt
 
 # Apps
 # ------------------
@@ -85,35 +82,6 @@ from frappe.utils import flt
 # }
 
 # hooks.py
-fixtures = [
-    {
-
-        "dt": "Server Script",
-        "filters": [
-            ["name", "in", [
-            
-                "Witholding VAT on vatable items"
-            ]]
-
-        ]
-    },
-    
-    {
-        "dt": "Workspace",
-        "filters": [
-            ["name", "in", [
-                "Production Manager Workspace",
-                "PM Manufacturing",
-                "PM Stock",
-                "Storekeeper Workspace",
-                "Stocks Workspace",
-                "Accounting Workspace",
-                "General Manager Home"
-            ]]
-        ]
-    }
-    
-]
 
 # Installation
 # ------------
@@ -281,46 +249,3 @@ fixtures = [
 
 
 # Document Events
-doc_events = {
-    "BOM": {
-        "validate": "upande_timaflor.hooks.validate_bom"
-    }
-}
-# BOM Validation Logic 
-def validate_bom(doc, method):
-    for item in doc.items:
-        if not item.item_code:
-            continue
-
-        rate_type = item.get("custom_application_rate_type")
-        
-        if rate_type == "Per Hectare":
-            validate_per_hectare(item)
-        elif rate_type == "Per 100L":
-            validate_per_100l(item)
-
-def validate_per_hectare(item):
-    if not item.get("custom_application_rate_per_ha"):
-        frappe.throw(_(f"Row {item.idx}: Application Rate (per ha) required for {item.item_code}"))
-    
-    if flt(item.custom_application_rate_per_ha) <= 0:
-        frappe.throw(_(f"Row {item.idx}: Application Rate must be > 0 for {item.item_code}"))
-    
-    if not item.get("custom_area_to_spray"):
-        frappe.throw(_(f"Row {item.idx}: Area to Spray required for {item.item_code}"))
-    
-    if item.get("custom_volume"):
-        frappe.throw(_(f"Row {item.idx}: Remove Water Volume for Per Hectare items"))
-
-def validate_per_100l(item):
-    if not item.get("custom_application_volume_per_10002000l"):
-        frappe.throw(_(f"Row {item.idx}: Application Volume (per 100L) required for {item.item_code}"))
-    
-    if flt(item.custom_application_volume_per_10002000l) <= 0:
-        frappe.throw(_(f"Row {item.idx}: Application Volume must be > 0 for {item.item_code}"))
-    
-    if not item.get("custom_volume"):
-        frappe.throw(_(f"Row {item.idx}: Water Volume required for {item.item_code}"))
-    
-    if item.get("custom_area_to_spray"):
-        frappe.throw(_(f"Row {item.idx}: Remove Area to Spray for Per 100L items"))
