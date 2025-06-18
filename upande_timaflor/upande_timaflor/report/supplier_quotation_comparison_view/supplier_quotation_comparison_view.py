@@ -66,6 +66,7 @@ def get_supplier_quotes(supplier_list, rfq_name):
     """
     return frappe.db.sql("""
         SELECT
+
             sq.name AS quotation_name,
             sq.supplier,
             sq.currency,
