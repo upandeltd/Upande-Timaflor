@@ -5,6 +5,11 @@ app_description = "ERPNext Implementation for Timaflor"
 app_email = "newton@upande.com"
 app_license = "mit"
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> Jeniffer
 # Apps
 # ------------------
 # required_apps = []
@@ -74,6 +79,7 @@ app_license = "mit"
 
 # add methods and filters to jinja environment
 
+<<<<<<< HEAD
 
 # JS file to override ERPNext's material_request.js
 #app_include_js = {web": ["erpnext/public/js/material_request.js"]}
@@ -138,6 +144,9 @@ fixtures = [
         ]
     }
 ]
+=======
+# hooks.py
+>>>>>>> Jeniffer
 
 
 >>>>>>> fa59d8d972870820c1d43b32b7cc02d49dc573ac
@@ -305,4 +314,7 @@ fixtures = [
 # }
 
 # Document Events
+<<<<<<< HEAD
 # ---------------
+=======
+>>>>>>> Jeniffer
