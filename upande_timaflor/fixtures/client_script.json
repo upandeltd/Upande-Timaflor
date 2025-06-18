@@ -4,10 +4,54 @@
   "doctype": "Client Script",
   "dt": "Material Request",
   "enabled": 1,
-  "modified": "2025-04-24 14:46:33.363410",
+  "modified": "2025-05-01 21:08:15.591979",
+  "module": "Upande Timaflor",
+  "name": "Material Assigned To Employee",
+  "script": "frappe.ui.form.on('Material Request', {\n    refresh(frm) {\n        handle_employee_assigned_logic(frm);\n    },\n\n    material_request_type(frm) {\n        handle_employee_assigned_logic(frm);\n    }\n});\n\nfunction handle_employee_assigned_logic(frm) {\n    frm.set_df_property(\"custom_employee_assigned_to\", \"hidden\", 1);\n    frm.set_df_property(\"custom_employee_assigned_to\", \"reqd\", 0);\n\n    if (frm.doc.material_request_type === \"Material Issue\") {\n        frm.set_df_property(\"custom_employee_assigned_to\", \"hidden\", 0);\n        frm.set_df_property(\"custom_employee_assigned_to\", \"reqd\", 1);\n    }\n}\n",
+  "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Stock Entry",
+  "enabled": 1,
+  "modified": "2025-05-19 11:34:19.824867",
+  "module": "Upande Timaflor",
+  "name": "Biometric Script Stock Entry",
+  "script": "frappe.ui.form.on('Stock Entry', {\n    refresh(frm) {\n        console.log(\"Stock Entry Refresh - biometric logic\");\n        setTimeout(() => handle_stock_biometric_logic(frm), 300);\n    },\n    purpose(frm) {\n        console.log(\"Purpose changed - biometric logic\");\n        setTimeout(() => handle_stock_biometric_logic(frm), 300);\n    }\n});\n\n// Global flag to avoid duplicate button addition\nfrappe.stock_entry_biometric_button_added = frappe.stock_entry_biometric_button_added || {};\n\nfunction handle_stock_biometric_logic(frm) {\n    console.log(\"Handling biometric logic for Stock Entry\");\n\n    if (frm.doc.purpose === \"Material Issue\") {\n        frm.set_df_property(\"custom_biometric_data\", \"hidden\", 0);\n\n        const buttonKey = frm.doctype + frm.docname;\n        const buttonExists = frappe.stock_entry_biometric_button_added[buttonKey];\n\n        if (!buttonExists) {\n            console.log(\"Adding biometric button to Stock Entry\");\n            add_stock_biometric_button(frm);\n        }\n    } else {\n        frm.set_df_property(\"custom_biometric_data\", \"hidden\", 1);\n    }\n}\n\nfunction has_biometric_signature(frm) {\n    return (frm.doc.custom_biometric_data || []).length > 0;\n}\n\nfunction add_stock_biometric_button(frm) {\n    const buttonKey = frm.doctype + frm.docname;\n    frm.remove_custom_button('Add Biometric Signature');\n\n    if (frm.doc.purpose === \"Material Issue\") {\n        frm.add_custom_button('Add Biometric Signature', function () {\n            if (has_biometric_signature(frm)) {\n                frappe.msgprint('Biometric data already added.');\n                return;\n            }\n\n            frappe.call({\n                method: 'get_latest_biometric_log',\n                callback: function (result) {\n                    if (result && result.message) {\n                        if (result.message.error) {\n                            frappe.msgprint(result.message.error);\n                            return;\n                        }\n\n                        const log = result.message;\n                        const row = frappe.model.add_child(frm.doc, 'Biometric Signature', 'custom_biometric_data');\n                        row.employee = log.employee;\n                        row.employee_name = log.employee_name;\n                        row.biometric_id = log.biometric_id;\n                        row.timestamp = log.timestamp;\n                        frm.refresh_field('custom_biometric_data');\n\n                        if (!frm.is_new()) {\n                            frm.save();\n                        }\n\n                        frappe.msgprint('Biometric data added.');\n                    }\n                },\n                error: function (err) {\n                    frappe.msgprint(__('Error fetching biometric log: ') + (err.message || \"unknown error\"));\n                }\n            });\n        }, __(\"Actions\"));\n\n        frappe.stock_entry_biometric_button_added[buttonKey] = true;\n    }\n}\n",
+  "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Purchase Order",
+  "enabled": 0,
+  "modified": "2025-06-10 15:05:32.600750",
+  "module": "Upande Timaflor",
+  "name": "Purchase Order Redirect",
+  "script": "// Purchase Order client script\nfrappe.ui.form.on('Purchase Order', {\n    refresh: function(frm) {\n        if (frm.doc.docstatus === 1 && frappe.flags.just_submitted) {\n            frappe.flags.just_submitted = false; // Clear the flag\n            frappe.set_route('List', 'Purchase Order');\n        }\n    },\n    on_submit: function(frm) {\n        frappe.flags.just_submitted = true;\n    }\n});\n",
+  "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Material Request",
+  "enabled": 0,
+  "modified": "2025-06-10 10:03:17.989897",
   "module": "Upande Timaflor",
   "name": "Biometric Signature",
   "script": "frappe.ui.form.on('Material Request', {\n    refresh(frm) {\n        handle_biometric_logic(frm);\n\n        // Add warning message if biometric signature is missing\n        if (frm.doc.docstatus === 1 && frm.doc.material_request_type === \"Material Issue\") {\n            if (!has_biometric_signature(frm)) {\n                frm.dashboard.add_comment(__('Please add a biometric signature before creating Material Issue.'), 'yellow');\n            }\n        }\n    },\n\n    material_request_type(frm) {\n        handle_biometric_logic(frm);\n    },\n\n    validate(frm) {\n        if (\n            frm.doc.material_request_type === \"Material Issue\" &&\n            frappe.flags.submit &&\n            !has_biometric_signature(frm)\n        ) {\n            frappe.throw(\"Biometric Signature is required before submitting a Material Issue request.\");\n        }\n    },\n\n   // Modified make_stock_entry function to pass employee data\n    make_stock_entry: function(frm) {\n        if (frm.doc.material_request_type === \"Material Issue\" && !has_biometric_signature(frm)) {\n            frappe.msgprint(__(\"Please add a biometric signature before creating Material Issue.\"));\n            return;\n        }\n        \n        // Get the employee from biometric data\n        let employee = null;\n        if (frm.doc.custom_biometric_data && frm.doc.custom_biometric_data.length > 0) {\n            employee = frm.doc.custom_biometric_data[0].employee;\n        }\n        \n        // If validation passes, open the mapped doc and set employee\n        frappe.model.open_mapped_doc({\n            method: \"erpnext.stock.doctype.material_request.material_request.make_stock_entry\",\n            frm: frm,\n            callback: function(r) {\n                if (r.doc && employee) {\n                    frappe.model.set_value(r.doc.doctype, r.doc.name, \"employee\", employee);\n                }\n            }\n        });\n    }\n});\n\nfunction handle_biometric_logic(frm) {\n    frm.set_df_property(\"custom_biometric_data\", \"hidden\", 1);\n    frm.set_df_property(\"custom_biometric_data\", \"reqd\", 0);\n    frm.remove_custom_button('Add Biometric Signature');\n\n    if (frm.doc.docstatus === 1 && frm.doc.material_request_type === \"Material Issue\") {\n        frm.set_df_property(\"custom_biometric_data\", \"hidden\", 0);\n        frm.set_df_property(\"custom_biometric_data\", \"reqd\", 1);\n        if (!has_biometric_signature(frm)) {\n            add_biometric_button(frm);\n        }\n    }\n}\n\nfunction has_biometric_signature(frm) {\n    return (frm.doc.custom_biometric_data || []).length > 0;\n}\n\nfunction add_biometric_button(frm) {\n    frm.add_custom_button('Add Biometric Signature', async () => {\n        if (has_biometric_signature(frm)) {\n            frappe.msgprint('Biometric data already added.');\n            frm.remove_custom_button('Add Biometric Signature');\n            return;\n        }\n\n        try {\n            const result = await frappe.call({\n                method: 'get_latest_biometric_log'\n            });\n\n            if (result && result.message) {\n                const log = result.message;\n                const row = frappe.model.add_child(frm.doc, 'Biometric Signature', 'custom_biometric_data');\n                row.employee = log.employee;\n                row.employee_name = log.employee_name;\n                row.biometric_id = log.biometric_id;\n                row.timestamp = log.timestamp;\n\n                frm.refresh_field('custom_biometric_data');\n                frappe.msgprint('Biometric data added.');\n                frm.remove_custom_button('Add Biometric Signature');\n            } else {\n                frappe.msgprint('No biometric log found in the last 30 seconds.');\n            }\n        } catch (e) {\n            frappe.msgprint(__('Error fetching biometric log: ') + e.message);\n        }\n    });\n}\n",
+  "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Material Request",
+  "enabled": 1,
+  "modified": "2025-06-10 10:58:38.131955",
+  "module": "Upande Timaflor",
+  "name": "Material Request Redirect",
+  "script": "frappe.ui.form.on('Material Request', {\n    on_submit(frm) {\n        frappe.set_route('List', 'Material Request');\n    }\n});",
   "view": "Form"
  }
 ]

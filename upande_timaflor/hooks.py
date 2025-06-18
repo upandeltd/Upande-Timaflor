@@ -82,6 +82,65 @@ app_license = "mit"
 
 # Fixtures
 # --------
+<<<<<<< HEAD
+=======
+fixtures = [
+    {
+        "dt": "Server Script",
+        "filters": [
+            ["name", "in", [
+                "get_latest_biometric_log"
+            ]]
+        ]
+    },
+    {
+        "dt": "Client Script",
+        "filters": [
+            ["name", "in", [
+                "Biometric Signature",
+                "Material Assigned To Employee",
+                "Biometric Script Stock Entry",
+                "Purchase Order Redirect",
+                "Material Request Redirect"
+
+           ]]
+        ]
+    },
+
+    {
+        "dt": "Workspace",
+        "filters": [
+            ["name", "in", [
+                "Accounting Workspace",
+
+           ]]
+        ]
+    },
+    # Preserve custom role permissions
+    {
+    "dt": "Custom Role",
+    "filters": []
+},
+       {
+        "doctype": "Custom DocPerm",
+        "filters": []  # This exports all custom doctype permissions
+    },
+   
+    {
+        "dt": "DocType",
+       "filters": [
+            ["name", "in", [
+                "Biometric Log",
+                "Biometric Signature",
+                "Assigned To Material",
+                
+            ]]
+        ]
+    }
+]
+
+
+>>>>>>> fa59d8d972870820c1d43b32b7cc02d49dc573ac
 # Installation
 # ------------
 # before_install = "upande_timaflor.install.before_install"
