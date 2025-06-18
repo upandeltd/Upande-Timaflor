@@ -8,13 +8,13 @@
  "field_order": [
   "section_break_grdh",
   "item",
-  "t1",
-  "t2",
-  "t3_avg",
-  "t4",
-  "t5",
-  "t6",
-  "t7",
+  "tima_1",
+  "tima_2",
+  "tima_3",
+  "tima_4",
+  "tima_5",
+  "tima_6",
+  "tima_7",
   "jangwani"
  ],
  "fields": [
@@ -34,7 +34,7 @@
   },
   {
    "columns": 1,
-   "fieldname": "t3_avg",
+   "fieldname": "tima_3",
    "fieldtype": "Float",
    "in_list_view": 1,
    "label": "TIMA 3 ",
@@ -42,7 +42,7 @@
   },
   {
    "columns": 1,
-   "fieldname": "t1",
+   "fieldname": "tima_1",
    "fieldtype": "Float",
    "in_list_view": 1,
    "label": "TIMA 1",
@@ -50,7 +50,7 @@
   },
   {
    "columns": 1,
-   "fieldname": "t2",
+   "fieldname": "tima_2",
    "fieldtype": "Float",
    "in_list_view": 1,
    "label": "TIMA 2 ",
@@ -58,7 +58,7 @@
   },
   {
    "columns": 1,
-   "fieldname": "t4",
+   "fieldname": "tima_4",
    "fieldtype": "Float",
    "in_list_view": 1,
    "label": "TIMA 4",
@@ -66,7 +66,7 @@
   },
   {
    "columns": 1,
-   "fieldname": "t5",
+   "fieldname": "tima_5",
    "fieldtype": "Float",
    "in_list_view": 1,
    "label": "TIMA 5",
@@ -74,7 +74,7 @@
   },
   {
    "columns": 1,
-   "fieldname": "t6",
+   "fieldname": "tima_6",
    "fieldtype": "Float",
    "in_list_view": 1,
    "label": "TIMA 6 ",
@@ -82,7 +82,7 @@
   },
   {
    "columns": 1,
-   "fieldname": "t7",
+   "fieldname": "tima_7",
    "fieldtype": "Float",
    "in_list_view": 1,
    "label": "TIMA 7",

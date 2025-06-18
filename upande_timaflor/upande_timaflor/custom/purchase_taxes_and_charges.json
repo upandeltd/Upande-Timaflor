@@ -82,8 +82,18 @@
    "field_name": "included_in_print_rate",
    "idx": 0,
    "is_system_generated": 0,
+<<<<<<< HEAD
+<<<<<<< HEAD
+   "modified": "2025-05-15 09:44:13.286889",
+   "modified_by": "Administrator",
+=======
    "modified": "2025-05-07 23:07:03.760375",
    "modified_by": "jeniffer@upande.com",
+>>>>>>> Jeniffer
+=======
+   "modified": "2025-05-15 09:44:13.286889",
+   "modified_by": "Administrator",
+>>>>>>> fa59d8d972870820c1d43b32b7cc02d49dc573ac
    "module": null,
    "name": "Purchase Taxes and Charges-included_in_print_rate-report_hide",
    "owner": "jeniffer@upande.com",
@@ -105,8 +115,18 @@
    "field_name": null,
    "idx": 0,
    "is_system_generated": 0,
+<<<<<<< HEAD
+<<<<<<< HEAD
+   "modified": "2025-05-15 09:44:13.298824",
+   "modified_by": "Administrator",
+=======
    "modified": "2025-05-07 23:07:03.662164",
    "modified_by": "jeniffer@upande.com",
+>>>>>>> Jeniffer
+=======
+   "modified": "2025-05-15 09:44:13.298824",
+   "modified_by": "Administrator",
+>>>>>>> fa59d8d972870820c1d43b32b7cc02d49dc573ac
    "module": null,
    "name": "Purchase Taxes and Charges-main-field_order",
    "owner": "jeniffer@upande.com",

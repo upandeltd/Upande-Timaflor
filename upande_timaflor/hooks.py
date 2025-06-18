@@ -5,11 +5,13 @@ app_description = "ERPNext Implementation for Timaflor"
 app_email = "newton@upande.com"
 app_license = "mit"
 
+<<<<<<< HEAD
+=======
 
 
+>>>>>>> Jeniffer
 # Apps
 # ------------------
-
 # required_apps = []
 
 # Each item in the list will be shown as an app in the apps page
@@ -17,7 +19,7 @@ app_license = "mit"
 # 	{
 # 		"name": "upande_timaflor",
 # 		"logo": "/assets/upande_timaflor/logo.png",
-# 		"title": "Upande Timaflor",
+# 		"title": "Upande Timaflor", 
 # 		"route": "/upande_timaflor",
 # 		"has_permission": "upande_timaflor.api.permission.has_app_permission"
 # 	}
@@ -76,13 +78,78 @@ app_license = "mit"
 # ----------
 
 # add methods and filters to jinja environment
-# jinja = {
-# 	"methods": "upande_timaflor.utils.jinja_methods",
-# 	"filters": "upande_timaflor.utils.jinja_filters"
-# }
 
+<<<<<<< HEAD
+
+# JS file to override ERPNext's material_request.js
+#app_include_js = {web": ["erpnext/public/js/material_request.js"]}
+
+
+
+# Fixtures
+# --------
+<<<<<<< HEAD
+=======
+fixtures = [
+    {
+        "dt": "Server Script",
+        "filters": [
+            ["name", "in", [
+                "get_latest_biometric_log"
+            ]]
+        ]
+    },
+    {
+        "dt": "Client Script",
+        "filters": [
+            ["name", "in", [
+                "Biometric Signature",
+                "Material Assigned To Employee",
+                "Biometric Script Stock Entry",
+                "Purchase Order Redirect",
+                "Material Request Redirect"
+
+           ]]
+        ]
+    },
+
+    {
+        "dt": "Workspace",
+        "filters": [
+            ["name", "in", [
+                "Accounting Workspace",
+
+           ]]
+        ]
+    },
+    # Preserve custom role permissions
+    {
+    "dt": "Custom Role",
+    "filters": []
+},
+       {
+        "doctype": "Custom DocPerm",
+        "filters": []  # This exports all custom doctype permissions
+    },
+   
+    {
+        "dt": "DocType",
+       "filters": [
+            ["name", "in", [
+                "Biometric Log",
+                "Biometric Signature",
+                "Assigned To Material",
+                
+            ]]
+        ]
+    }
+]
+=======
 # hooks.py
+>>>>>>> Jeniffer
 
+
+>>>>>>> fa59d8d972870820c1d43b32b7cc02d49dc573ac
 # Installation
 # ------------
 
@@ -246,6 +313,8 @@ app_license = "mit"
 # 	"Logging DocType Name": 30  # days to retain logs
 # }
 
-
-
 # Document Events
+<<<<<<< HEAD
+# ---------------
+=======
+>>>>>>> Jeniffer

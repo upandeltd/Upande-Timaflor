@@ -19,6 +19,7 @@ def execute(filters=None):
         frappe.msgprint(_("Default company currency not found. Please set it up."), title=_("Configuration Error"))
         return [], []
 
+<<<<<<< HEAD
     rfq_items = get_rfq_items(rfq_name)
     if not rfq_items:
         frappe.msgprint(_("No items found in the selected Request for Quotation."), title=_("No Items"))
@@ -43,12 +44,17 @@ def get_rfq_items(rfq_name):
     Fetches distinct items from the Request for Quotation.
     """
     return frappe.get_all(
+=======
+    # Get all items from the RFQ
+    rfq_items = frappe.get_all(
+>>>>>>> fa59d8d972870820c1d43b32b7cc02d49dc573ac
         "Request for Quotation Item",
         filters={"parent": rfq_name},
         fields=["item_code", "item_name", "uom"],
         distinct=True
     )
 
+<<<<<<< HEAD
 def get_rfq_suppliers(rfq_name):
     """
     Fetches all suppliers linked to the Request for Quotation.
@@ -68,13 +74,18 @@ def get_supplier_quotes(supplier_list, rfq_name):
         SELECT
 
             sq.name AS quotation_name,
+=======
+    # Get Supplier Quotations linked to the RFQ
+    supplier_quotes = frappe.db.sql("""
+        SELECT 
+>>>>>>> fa59d8d972870820c1d43b32b7cc02d49dc573ac
             sq.supplier,
-            sq.currency,
             sqi.item_code,
             sqi.item_name,
             sqi.uom,
             sqi.qty,
             sqi.rate
+<<<<<<< HEAD
         FROM `tabSupplier Quotation` sq
         INNER JOIN `tabSupplier Quotation Item` sqi ON sq.name = sqi.parent
         WHERE sq.docstatus = 1 -- Only consider submitted quotations
@@ -130,6 +141,36 @@ def build_table_data(rfq_items, supplier_quotes, company_currency, rfq_name):
             "qty": q.qty
         }
 
+=======
+        FROM 
+            `tabSupplier Quotation` sq
+        INNER JOIN 
+            `tabSupplier Quotation Item` sqi ON sq.name = sqi.parent
+        WHERE 
+            request_for_quotation = %s
+        ORDER BY 
+            sq.supplier
+    """, rfq_name, as_dict=True)
+
+    if not supplier_quotes:
+        frappe.msgprint("No supplier quotations found.")
+        return [], []
+
+    # Determine unique supplier list
+    suppliers = sorted(list({q["supplier"] for q in supplier_quotes}))
+    supplier_columns = [{"label": s, "fieldname": s, "fieldtype": "Currency"} for s in suppliers]
+
+    # Define columns
+    columns = [
+        {"label": "Item Code", "fieldname": "item_code", "fieldtype": "Data", "width": 150},
+        {"label": "Item Name", "fieldname": "item_name", "fieldtype": "Data", "width": 200},
+    ] + supplier_columns
+
+    # Map of (item_code, supplier) -> rate
+    rate_map = {(q["item_code"], q["supplier"]): q["rate"] for q in supplier_quotes}
+
+    # Build rows
+>>>>>>> fa59d8d972870820c1d43b32b7cc02d49dc573ac
     data = []
     rfq_item_qty_map = {item.item_code: frappe.get_value("Request for Quotation Item", {"parent": rfq_name, "item_code": item.item_code}, "qty") for item in rfq_items}
 
@@ -137,6 +178,7 @@ def build_table_data(rfq_items, supplier_quotes, company_currency, rfq_name):
     for item in rfq_items:
         row = {
             "item_code": item.item_code,
+<<<<<<< HEAD
             "item_name": item.item_name,
             "uom": item.uom,
             "rfq_qty": rfq_item_qty_map.get(item.item_code, 0)
@@ -182,6 +224,12 @@ def build_table_data(rfq_items, supplier_quotes, company_currency, rfq_name):
 
             row[sup] = f'{checkbox}<span style="color:{color};">{money_formatted}</span>'
 
+=======
+            "item_name": item.item_name
+        }
+        for supplier in suppliers:
+            row[supplier] = rate_map.get((item.item_code, supplier), None)
+>>>>>>> fa59d8d972870820c1d43b32b7cc02d49dc573ac
         data.append(row)
 
     return columns, data

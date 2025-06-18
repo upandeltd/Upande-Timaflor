@@ -1,0 +1,25 @@
+{
+ "doctype": "Material Request",
+ "permissions": [
+  {
+   "creation": "2025-03-26 10:00:00.000000",
+   "doctype": "Material Request",
+   "modified": "2025-03-26 10:00:00.000000",
+   "modified_by": "Administrator",
+   "name": "Material Request-production-manager",
+   "owner": "Administrator",
+   "parent": null,
+   "parentfield": null,
+   "parenttype": null,
+   "permlevel": 1,
+   "role": "Production Manager",
+   "select": 1,
+   "set_user_permissions": 0,
+   "share": 0,
+   "write": 1,
+   "apply_user_permissions": 1,
+   "applicable_for": "All",
+   "condition": "EXISTS(SELECT 1 FROM `tabWarehouse` w WHERE w.name = `tabMaterial Request`.set_warehouse AND w.farm IN (SELECT f.name FROM `tabFarm` f WHERE f.manager = '{user}'))"
+  }
+ ]
+}
