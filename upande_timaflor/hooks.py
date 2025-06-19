@@ -102,7 +102,10 @@ fixtures = [
                 "Material Assigned To Employee",
                 "Biometric Script Stock Entry",
                 "Purchase Order Redirect",
-                "Material Request Redirect"
+                "Material Request Redirect",
+                "Hide Clinician Issue Material Request",
+                "Hide Clinician Issue Stock Entry",
+
 
            ]]
         ]
@@ -112,20 +115,14 @@ fixtures = [
         "dt": "Workspace",
         "filters": [
             ["name", "in", [
-                "Accounting Workspace",
+                "Accounting Workspace"
 
            ]]
         ]
     },
-    # Preserve custom role permissions
-    {
-    "dt": "Custom Role",
-    "filters": []
+   {
+    "dt": "Custom DocPerm"
 },
-       {
-        "doctype": "Custom DocPerm",
-        "filters": []  # This exports all custom doctype permissions
-    },
    
     {
         "dt": "DocType",
@@ -133,7 +130,7 @@ fixtures = [
             ["name", "in", [
                 "Biometric Log",
                 "Biometric Signature",
-                "Assigned To Material",
+                "Assigned To Material"
                 
             ]]
         ]
