@@ -36,7 +36,8 @@ def get_all_chemicals_with_details():
         custom_fields = {
             "application_rate": "custom_application_rate_per_ha",
             "required_sprays": "custom_advised_no_sprays",
-            "number_of_sprays": "custom_no_of_sprays"
+            "number_of_sprays": "custom_no_of_sprays",
+            "target": "custom_target"
         }
         
         # Add existing custom fields
@@ -55,6 +56,10 @@ def get_all_chemicals_with_details():
             chem.setdefault("application_rate", 0)
             chem.setdefault("required_sprays", 0)
             chem.setdefault("number_of_sprays", 0)
+            chem.setdefault("target", "")
+        
+        # Sort by target first, then by item name
+        chemicals.sort(key=lambda x: (x.get("target", ""), x.get("item_name", "")))
         
         return chemicals
     except Exception as e:
@@ -69,7 +74,8 @@ def get_chemical_details(item_code):
         custom_fields = {
             "application_rate": "custom_application_rate_per_ha",
             "required_sprays": "custom_advised_no_sprays",
-            "number_of_sprays": "custom_no_of_sprays"
+            "number_of_sprays": "custom_no_of_sprays",
+            "target": "custom_target"
         }
         
         # Add existing custom fields
@@ -85,6 +91,7 @@ def get_chemical_details(item_code):
             chem.setdefault("application_rate", 0)
             chem.setdefault("required_sprays", 0)
             chem.setdefault("number_of_sprays", 0)
+            chem.setdefault("target", "")
             return chem
             
         return {}

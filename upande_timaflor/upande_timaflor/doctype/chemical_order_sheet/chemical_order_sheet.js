@@ -42,6 +42,7 @@ frappe.ui.form.on('Chemical Order Sheet', {
                                     let row = frm.add_child('spray_details');
                                     row.chemical = chem.name;
                                     row.chemical_name = chem.item_name;
+                                    row.target = chem.target || '';
                                     row.application_rate_per_hectare = chem.application_rate || 0;
                                     row.required_number_of_sprays = chem.required_sprays || 0;
                                     row.number_of_sprays = chem.number_of_sprays || chem.required_sprays || 0;
@@ -184,6 +185,7 @@ frappe.ui.form.on('Spray Details', {
                 callback: function(r) {
                     if (r.message) {
                         frappe.model.set_value(cdt, cdn, 'chemical_name', r.message.item_name);
+                        frappe.model.set_value(cdt, cdn, 'target', r.message.target || '');
                         frappe.model.set_value(cdt, cdn, 'application_rate_per_hectare', r.message.application_rate || 0);
                         frappe.model.set_value(cdt, cdn, 'required_number_of_sprays', r.message.required_sprays || 0);
                         frappe.model.set_value(cdt, cdn, 'number_of_sprays', r.message.number_of_sprays || r.message.required_sprays || 0);
