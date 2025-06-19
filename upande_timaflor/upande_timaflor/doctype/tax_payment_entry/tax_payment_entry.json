@@ -1,0 +1,155 @@
+{
+ "actions": [],
+ "autoname": "format:{tax_type}-{MM}-{YY}-{#####}",
+ "creation": "2025-05-29 11:34:44.607394",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "purchase_invoice",
+  "supplier_name",
+  "bill_no",
+  "tax_amount",
+  "select_for_payment",
+  "status",
+  "tax_percentage",
+  "column_break_usab",
+  "supplier_invoice_no",
+  "payment_date",
+  "prn_number",
+  "voucher",
+  "journal_entry",
+  "outstanding_amount",
+  "invoice",
+  "supplier",
+  "payment_status"
+ ],
+ "fields": [
+  {
+   "fieldname": "purchase_invoice",
+   "fieldtype": "Link",
+   "label": "Purchase Invoice",
+   "options": "Purchase Invoice"
+  },
+  {
+   "fieldname": "supplier_name",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Supplier Name",
+   "options": "Supplier",
+   "read_only": 1
+  },
+  {
+   "fieldname": "supplier_invoice_no",
+   "fieldtype": "Data",
+   "label": "Supplier Invoice No",
+   "read_only": 1
+  },
+  {
+   "fieldname": "voucher",
+   "fieldtype": "Data",
+   "label": "Voucher Number"
+  },
+  {
+   "fieldname": "tax_percentage",
+   "fieldtype": "Float",
+   "label": "Tax %"
+  },
+  {
+   "fieldname": "tax_amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Tax Amount"
+  },
+  {
+   "default": "0",
+   "fieldname": "select_for_payment",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Select for Payment"
+  },
+  {
+   "default": "Pending",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Paid\nPending",
+   "read_only": 1
+  },
+  {
+   "fieldname": "prn_number",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "PRN Number"
+  },
+  {
+   "fieldname": "payment_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Payment Date"
+  },
+  {
+   "fieldname": "journal_entry",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Journal Entry",
+   "options": "Journal Entry"
+  },
+  {
+   "fetch_from": "purchase_invoice.bill_no",
+   "fieldname": "bill_no",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Bill No",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_usab",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "outstanding_amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Outstanding amount"
+  },
+  {
+   "fieldname": "invoice",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Invoice",
+   "options": "Purchase Invoice"
+  },
+  {
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Supplier",
+   "options": "Supplier"
+  },
+  {
+   "default": "Pending",
+   "fieldname": "payment_status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Payment Status",
+   "options": "Pending\nPaid"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-06-16 19:14:35.540116",
+ "modified_by": "Administrator",
+ "module": "Upande Timaflor",
+ "name": "Tax Payment Entry",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

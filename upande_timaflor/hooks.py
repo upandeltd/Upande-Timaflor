@@ -5,6 +5,7 @@ app_description = "ERPNext Implementation for Timaflor"
 app_email = "newton@upande.com"
 app_license = "mit"
 
+
 # Apps
 # ------------------
 # required_apps = []
@@ -73,20 +74,17 @@ app_license = "mit"
 # ----------
 
 # add methods and filters to jinja environment
-jinja = {
-	"methods": "upande_timaflor.utils.jinja_methods",
-	"filters": "upande_timaflor.utils.jinja_filters"
-}
+
+
 
 # JS file to override ERPNext's material_request.js
 #app_include_js = {web": ["erpnext/public/js/material_request.js"]}
 
-doctype_js = {
-    "Material Request": "public/js/material_request.js"
-}
+
 
 # Fixtures
 # --------
+
 fixtures = [
     {
         "dt": "Server Script",
@@ -101,60 +99,55 @@ fixtures = [
         "filters": [
             ["name", "in", [
                 "Biometric Signature",
-                "Material Assigned To Employee"
+                "Material Assigned To Employee",
+                "Biometric Script Stock Entry",
+                "Purchase Order Redirect",
+                "Material Request Redirect",
+                "Hide Clinician Issue Material Request",
+                "Hide Clinician Issue Stock Entry",
+
+
            ]]
         ]
     },
+
     {
         "dt": "Workspace",
         "filters": [
             ["name", "in", [
-                "Production Manager Workspace",
-                "PM Manufacturing",
-                "PM Stock",
-                "Storekeeper Workspace",
-                "Stocks Workspace",
-                "Accounting Workspace",
-                "General Manager Home"
-            ]]
+                "Accounting Workspace"
+
+           ]]
         ]
     },
+   {
+    "dt": "Custom DocPerm"
+},
+   
     {
         "dt": "DocType",
        "filters": [
             ["name", "in", [
                 "Biometric Log",
                 "Biometric Signature",
-                "Assigned To Material",
-                "Greenhouse",
-                "Ordering Sheet",
-                "Order Detail",
-                "Order Quantity",
-                "Daily Maximum Consumption",
-                "Daily Minimum Consumption",
-                "Fertilizer Order Sheet",
-                "Fertilizer Stock Levels",
-                "Chemical Stock Levels",
-                "Chemical Order Sheet",
-                "Chemical Order Quantity",
-                "Area To Spray",
-                "Chemical Sprays",
-                "Fertilizer Average Consumption",
-                "Stock Levels",
-                "Quantity To Order",
-                "Chemical Target"
+                "Assigned To Material"
+                
             ]]
         ]
     }
 ]
 
+# hooks.py
+
 # Installation
 # ------------
+
 # before_install = "upande_timaflor.install.before_install"
 # after_install = "upande_timaflor.install.after_install"
 
 # Uninstallation
 # ------------
+
 # before_uninstall = "upande_timaflor.uninstall.before_uninstall"
 # after_uninstall = "upande_timaflor.uninstall.after_uninstall"
 
@@ -162,6 +155,7 @@ fixtures = [
 # ------------------
 # To set up dependencies/integrations with other apps
 # Name of the app being installed is passed as an argument
+
 # before_app_install = "upande_timaflor.utils.before_app_install"
 # after_app_install = "upande_timaflor.utils.after_app_install"
 
@@ -169,17 +163,20 @@ fixtures = [
 # -------------------
 # To clean up dependencies/integrations with other apps
 # Name of the app being uninstalled is passed as an argument
+
 # before_app_uninstall = "upande_timaflor.utils.before_app_uninstall"
 # after_app_uninstall = "upande_timaflor.utils.after_app_uninstall"
 
 # Desk Notifications
 # ------------------
 # See frappe.core.notifications.get_notification_config
+
 # notification_config = "upande_timaflor.notifications.get_notification_config"
 
 # Permissions
 # -----------
 # Permissions evaluated in scripted ways
+
 # permission_query_conditions = {
 # 	"Event": "frappe.desk.doctype.event.event.get_permission_query_conditions",
 # }
@@ -191,12 +188,26 @@ fixtures = [
 # DocType Class
 # ---------------
 # Override standard doctype classes
+
 # override_doctype_class = {
 # 	"ToDo": "custom_app.overrides.CustomToDo"
 # }
 
+# Document Events
+# ---------------
+# Hook on document methods and events
+
+# doc_events = {
+# 	"*": {
+# 		"on_update": "method",
+# 		"on_cancel": "method",
+# 		"on_trash": "method"
+# 	}
+# }
+
 # Scheduled Tasks
 # ---------------
+
 # scheduler_events = {
 # 	"all": [
 # 		"upande_timaflor.tasks.all"
@@ -217,10 +228,12 @@ fixtures = [
 
 # Testing
 # -------
+
 # before_tests = "upande_timaflor.install.before_tests"
 
 # Overriding Methods
 # ------------------------------
+#
 # override_whitelisted_methods = {
 # 	"frappe.desk.doctype.event.event.get_events": "upande_timaflor.event.get_events"
 # }
@@ -233,10 +246,12 @@ fixtures = [
 # }
 
 # exempt linked doctypes from being automatically cancelled
+#
 # auto_cancel_exempted_doctypes = ["Auto Repeat"]
 
 # Ignore links to specified DocTypes when deleting documents
 # -----------------------------------------------------------
+
 # ignore_links_on_delete = ["Communication", "ToDo"]
 
 # Request Events
@@ -251,6 +266,7 @@ fixtures = [
 
 # User Data Protection
 # --------------------
+
 # user_data_fields = [
 # 	{
 # 		"doctype": "{doctype_1}",
@@ -274,6 +290,7 @@ fixtures = [
 
 # Authentication and authorization
 # --------------------------------
+
 # auth_hooks = [
 # 	"upande_timaflor.auth.validate"
 # ]
@@ -286,12 +303,6 @@ fixtures = [
 # }
 
 # Document Events
+
 # ---------------
-doc_events = {
-    "BOM": {
-        "validate": ["upande_timaflor.utils.validate_bom"]
-    }
-}
-doctype_js = {
-    "Material Request": "public/js/material_request.js"
-}
+
