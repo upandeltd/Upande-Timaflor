@@ -288,7 +288,7 @@ def create_purchase_orders_from_rfq(selections):
                 po.append("items", po_item)
 
             po.insert(ignore_permissions=True)
-            po.submit()
+            po.save()
             created_po_names.append(po.name)
 
         except Exception as e:
